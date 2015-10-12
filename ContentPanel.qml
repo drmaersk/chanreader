@@ -2,8 +2,8 @@ import QtQuick 2.0
 
 
 Item {
-    Rectangle {
-        color: "brown"
+    FrontPage {
+        id: frontPage
         anchors.fill: parent
     }
 }
