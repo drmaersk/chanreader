@@ -1,35 +1,61 @@
 import QtQuick 2.0
+import QtQuick.Controls 1.4
 
 Item {
+    id: postBase
     property string no:     ""
     //date
     property string author: ""
     property string comment: ""
-    width: parent.width
-    height: 50
+    width: baseThread.width -20
+    height: 95
     //picture
     Rectangle {
+        id: postBackGround
+        border.color: "black"
         color: "orange"
         anchors.fill: parent
-    Text {
+    }
+
+    Label {
         id: noText
         text: no
-        anchors.margins: 3
+        anchors.rightMargin: 3
+        anchors.leftMargin: 3
+        anchors.bottomMargin: 3
+        anchors.topMargin: 5
+        anchors.top: parent.top
         anchors.left: parent.left
     }
-    Text {
+    Label {
         id: authorText
         text: author
-        anchors.margins: 3
+        anchors.rightMargin: 3
+        anchors.leftMargin: 3
+        anchors.bottomMargin: 3
+        anchors.topMargin: 5
+        anchors.top: parent.top
         anchors.left: noText.right
     }
-    Text {
+    Label {
         id: commentText
         text: comment
-        anchors.margins: 3
+        anchors.rightMargin: 3
+        anchors.leftMargin: 3
+        anchors.bottomMargin: 3
+        anchors.topMargin: 5
+        anchors.top: parent.top
         anchors.left: authorText.right
-        wrapMode: Text.WrapAnywhere
+        anchors.right: parent.right
+        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        textFormat: Text.RichText
     }
+
+    Component.onCompleted: {
+        var totalContentWidth = 9 + commentText.contentWidth + authorText.contentWidth + noText.contentWidth;
+        if(totalContentWidth < 1920)
+            postBase.width = totalContentWidth + 10
     }
+
 }
 

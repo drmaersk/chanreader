@@ -37,7 +37,10 @@ ApplicationWindow {
 toolBar: ToolBar {
     RowLayout {
         anchors.fill: parent
-        ToolButton {text: "/b/"}
+        ToolButton {
+            text: "/b/"
+            onClicked: contentPanel.switchState(); //TODO: For testing remove
+        }
         ToolButton {
             anchors.right: parent.right
 
@@ -55,7 +58,7 @@ ContentPanel {
     anchors.left: parent.left
     anchors.bottom: parent.bottom
     anchors.right: threadStackPanel.left
-    anchors.rightMargin: 3
+    anchors.margins: 3
 }
 
 
@@ -65,8 +68,6 @@ ThreadStackPanel {
     anchors.top: parent.top
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    anchors.rightMargin: 3
-
 }
 }
 
