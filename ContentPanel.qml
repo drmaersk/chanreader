@@ -1,5 +1,5 @@
 import QtQuick 2.0
-
+import "frontPageApi.js" as ChanApi
 
 Item {
     FrontPage {
@@ -42,6 +42,24 @@ Item {
             }
         }
     ]
+    onStateChanged: {
+        console.log("currentState: " + state)
+        if(state == "frontPage") {
+            //use webService
+            ChanApi.request(function ()
+            {
+                console.log("httpRequest done")
+                frontPage.threadData = ChanApi.getThreads();
+            }
+            );
+
+        }
+    }
+
+    function loadingDone()
+    {
+
+    }
 
     function switchState()
     {

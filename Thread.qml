@@ -3,9 +3,7 @@ import QtQuick.Controls 1.4
 
 ScrollView {
     id: baseThread
-    property variant postData: [
-        {no: "", author: "", comment: ""},
-     ]
+    property variant postData: [{no: "", name: "", com: ""}]
 
     width: contentPanel.width
 
@@ -24,8 +22,8 @@ ScrollView {
             model: postData
             delegate: Post {
                 no: modelData.no
-                author: modelData.author
-                comment: modelData.comment
+                name: modelData.name
+                com: modelData.com
             }
         }
     }
