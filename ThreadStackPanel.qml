@@ -11,7 +11,7 @@ Item{
         {name: currentDate.getUTCMilliseconds().toLocaleString()},
         {name: currentDate.getUTCMilliseconds().toLocaleString()}]
 
-    state: "open"
+    state: "closed"
     states: [
         State
         {

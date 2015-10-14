@@ -11,6 +11,5 @@ or
 Thread.qml
 
 The FrontPage.qml contains multiple threads.
-Maybe not possible to connect this to the Thread.qml
 
 Thread.qml contains multiple Post.qml

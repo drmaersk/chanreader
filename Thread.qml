@@ -7,6 +7,8 @@ ScrollView {
 
     width: contentPanel.width
 
+    horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+
     Rectangle {
         id: threadBackGroundColor
         color: "#FFB84D"
@@ -28,7 +30,7 @@ ScrollView {
         }
     }
     Component.onCompleted: {
-        height = Math.min(300,(postContainer.children.length -1) * 100)
+        height = 300//Math.min(300,(postContainer.children.length -1) * 100)
     }
 }
 

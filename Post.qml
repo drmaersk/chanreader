@@ -3,10 +3,10 @@ import QtQuick.Controls 1.4
 
 Item {
     id: postBase
-    property string no:     ""
+    property string no
     //date
-    property string name: ""
-    property string com: ""
+    property string name
+    property string com
     width: baseThread.width -20
     height: 95
     //picture
@@ -42,20 +42,21 @@ Item {
         text: com
         anchors.rightMargin: 3
         anchors.leftMargin: 3
-        anchors.bottomMargin: 3
+        anchors.bottomMargin: 5
         anchors.topMargin: 5
         anchors.top: parent.top
         anchors.left: nameText.right
-        anchors.right: parent.right
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         textFormat: Text.RichText
-    }
+   }
 
     Component.onCompleted: {
-        console.log("post.onComplete")
         var totalContentWidth = 9 + comText.contentWidth + nameText.contentWidth + noText.contentWidth;
         if(totalContentWidth < 1920)
-            postBase.width = totalContentWidth + 10
+            postBase.width = Math.max(300,totalContentWidth + 10)
+        if(comText.contentHeight > postBase.height){
+            postBase.height = comText.contentHeight + 5
+        }
     }
 
 }
