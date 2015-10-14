@@ -52,6 +52,7 @@ toolBar: ToolBar {
 
     }
 }
+
 ContentPanel {
     id: contentPanel
     anchors.top: parent.top

@@ -15,40 +15,42 @@ Item {
         border.color: "black"
         color: "orange"
         anchors.fill: parent
-    }
 
-    Label {
-        id: noText
-        text: no
-        anchors.rightMargin: 3
-        anchors.leftMargin: 3
-        anchors.bottomMargin: 3
-        anchors.topMargin: 5
-        anchors.top: parent.top
-        anchors.left: parent.left
+
+        Label {
+            id: noText
+            text: no
+            anchors.rightMargin: 3
+            anchors.leftMargin: 3
+            anchors.bottomMargin: 3
+            anchors.topMargin: 5
+            anchors.top: parent.top
+            anchors.left: parent.left
+        }
+        Label {
+            id: nameText
+            text: name
+            anchors.rightMargin: 3
+            anchors.leftMargin: 3
+            anchors.bottomMargin: 3
+            anchors.topMargin: 5
+            anchors.top: parent.top
+            anchors.left: noText.right
+        }
+        Label {
+            id: comText
+            text: com
+            anchors.rightMargin: 3
+            anchors.leftMargin: 3
+            anchors.bottomMargin: 5
+            anchors.topMargin: 5
+            anchors.top: parent.top
+            anchors.left: nameText.right
+            textFormat: Text.RichText
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+
+        }
     }
-    Label {
-        id: nameText
-        text: name
-        anchors.rightMargin: 3
-        anchors.leftMargin: 3
-        anchors.bottomMargin: 3
-        anchors.topMargin: 5
-        anchors.top: parent.top
-        anchors.left: noText.right
-    }
-    Label {
-        id: comText
-        text: com
-        anchors.rightMargin: 3
-        anchors.leftMargin: 3
-        anchors.bottomMargin: 5
-        anchors.topMargin: 5
-        anchors.top: parent.top
-        anchors.left: nameText.right
-        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        textFormat: Text.RichText
-   }
 
     Component.onCompleted: {
         var totalContentWidth = 9 + comText.contentWidth + nameText.contentWidth + noText.contentWidth;

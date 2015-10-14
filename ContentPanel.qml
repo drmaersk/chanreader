@@ -2,6 +2,7 @@ import QtQuick 2.0
 import "frontPageApi.js" as ChanApi
 
 Item {
+    id: contentPanel
     FrontPage {
         id: frontPage
         anchors.fill: parent
@@ -19,12 +20,12 @@ Item {
             PropertyChanges {
                 target: mainThread
                 opacity: 1.0
-                z: -1
+                z: 0
             }
             PropertyChanges {
                 target: frontPage
                 opacity: 0.0
-                z: 1
+                z: 3
             }
         },
         State
@@ -33,12 +34,12 @@ Item {
             PropertyChanges {
                 target: mainThread
                 opacity: 0.0
-                z: 1
+                z: 0
             }
             PropertyChanges {
                 target: frontPage
                 opacity: 1.0
-                z: -1
+                z: 3
             }
         }
     ]
@@ -49,10 +50,10 @@ Item {
             ChanApi.request(function ()
             {
                 console.log("httpRequest done")
+                console.log(JSON.stringify(ChanApi.getThreads()))
                 frontPage.threadData = ChanApi.getThreads();
             }
             );
-
         }
     }
 
@@ -67,6 +68,20 @@ Item {
             state = "thread"
         else
             state = "frontPage"
+    }
+
+    function viewSingleThread(threadId)
+    {
+        console.log("I wanna see " + threadId)
+        state = "thread"
+        ChanApi.requestThread(threadId, function ()
+        {
+            console.log("httpRequest get Single thread done")
+            console.log(JSON.stringify(ChanApi.getSingleThread()));
+            mainThread.postData = ChanApi.getSingleThread()
+
+        }
+        );
     }
 }
 

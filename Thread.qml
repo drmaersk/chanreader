@@ -4,7 +4,12 @@ import QtQuick.Controls 1.4
 ScrollView {
     id: baseThread
     property variant postData: [{no: "", name: "", com: ""}]
+    property string threadId
+    onPostDataChanged: {
+        threadId = postData[0].no
+    }
 
+    state: contentPanel.state
     width: contentPanel.width
 
     horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
@@ -13,6 +18,19 @@ ScrollView {
         id: threadBackGroundColor
         color: "#FFB84D"
         anchors.fill: parent
+        Button {
+            id: viewThreadButton
+            width: 50
+            height: 20
+            text: "View"
+            anchors.right : parent.right
+            anchors.bottom : parent.bottom
+            anchors.rightMargin: 10
+            anchors.bottomMargin: 10
+            onClicked: {
+                contentPanel.viewSingleThread(baseThread.threadId)
+            }
+        }
 
     }
 
@@ -29,8 +47,42 @@ ScrollView {
             }
         }
     }
+
+    states: [
+        State
+        {
+            name: "thread"
+            PropertyChanges {
+                target: viewThreadButton
+                opacity: 0.0
+                z: -1
+            }
+            PropertyChanges {
+                target: baseThread
+                height: 900
+            }
+        },
+        State
+        {
+            name: "frontPage"
+            PropertyChanges {
+                target: viewThreadButton
+                opacity: 1.0
+                z: 1
+            }
+            PropertyChanges {
+                target: baseThread
+                height: 300
+            }
+        }
+    ]
+
     Component.onCompleted: {
         height = 300//Math.min(300,(postContainer.children.length -1) * 100)
+
     }
+
+
+
 }
 
