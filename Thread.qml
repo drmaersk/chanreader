@@ -3,7 +3,8 @@ import QtQuick.Controls 1.4
 
 ScrollView {
     id: baseThread
-    property variant postData: [{no: "", name: "", com: ""}]
+
+    property variant postData: [{no: "", name: "", com: "", ext: "", tim: "", trip: ""}]
     property string threadId
     onPostDataChanged: {
         threadId = postData[0].no
@@ -42,8 +43,11 @@ ScrollView {
             model: postData
             delegate: Post {
                 no: modelData.no
-                name: modelData.name
-                com: modelData.com
+                name: modelData.name ? modelData.name : ""
+                com: modelData.com ? modelData.com : ""
+                ext: modelData.ext ? modelData.ext : ""
+                tim: modelData.tim ? modelData.tim : ""
+                trip: modelData.trip ? modelData.trip : ""
             }
         }
     }

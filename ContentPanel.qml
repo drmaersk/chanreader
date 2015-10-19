@@ -50,7 +50,7 @@ Item {
             ChanApi.request(function ()
             {
                 console.log("httpRequest done")
-                console.log(JSON.stringify(ChanApi.getThreads()))
+                //console.log(JSON.stringify(ChanApi.getThreads()))
                 frontPage.threadData = ChanApi.getThreads();
             }
             );
@@ -77,7 +77,7 @@ Item {
         ChanApi.requestThread(threadId, function ()
         {
             console.log("httpRequest get Single thread done")
-            console.log(JSON.stringify(ChanApi.getSingleThread()));
+           // console.log(JSON.stringify(ChanApi.getSingleThread()));
             mainThread.postData = ChanApi.getSingleThread()
 
         }
