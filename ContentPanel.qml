@@ -20,12 +20,12 @@ Item {
             PropertyChanges {
                 target: mainThread
                 opacity: 1.0
-                z: 0
+                z: 3
             }
             PropertyChanges {
                 target: frontPage
                 opacity: 0.0
-                z: 3
+                z: 0
             }
         },
         State
@@ -50,16 +50,10 @@ Item {
             ChanApi.request(function ()
             {
                 console.log("httpRequest done")
-                //console.log(JSON.stringify(ChanApi.getThreads()))
                 frontPage.threadData = ChanApi.getThreads();
             }
             );
         }
-    }
-
-    function loadingDone()
-    {
-
     }
 
     function switchState()
@@ -77,7 +71,6 @@ Item {
         ChanApi.requestThread(threadId, function ()
         {
             console.log("httpRequest get Single thread done")
-           // console.log(JSON.stringify(ChanApi.getSingleThread()));
             mainThread.postData = ChanApi.getSingleThread()
 
         }

@@ -4,7 +4,7 @@ import QtQuick.Controls 1.4
 ScrollView {
     id: baseThread
 
-    property variant postData: [{no: "", name: "", com: "", ext: "", tim: "", trip: ""}]
+    property variant postData: [{no: "", name: "", com: "", ext: "", tim: "", trip: "", w: "", h: ""}]
     property string threadId
     onPostDataChanged: {
         threadId = postData[0].no
@@ -48,6 +48,8 @@ ScrollView {
                 ext: modelData.ext ? modelData.ext : ""
                 tim: modelData.tim ? modelData.tim : ""
                 trip: modelData.trip ? modelData.trip : ""
+                w: modelData.w ? modelData.w : ""
+                h: modelData.h ? modelData.h : ""
             }
         }
     }
@@ -59,7 +61,7 @@ ScrollView {
             PropertyChanges {
                 target: viewThreadButton
                 opacity: 0.0
-                z: -1
+                z: 0
             }
             PropertyChanges {
                 target: baseThread

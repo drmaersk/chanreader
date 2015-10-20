@@ -10,6 +10,8 @@ Item {
     property string ext
     property string tim
     property string trip
+    property string w
+    property string h
 
     width: baseThread.width -20
     height: 95
@@ -51,6 +53,13 @@ Item {
             anchors.topMargin: 5
             anchors.top: noText.bottom
             anchors.left: parent.left
+            onStatusChanged: {
+                if(previewImage.status == Image.Ready)
+                {
+                    redrawPost();
+                }
+            }
+
             state: "hidden"
             states: [
                 State {
@@ -74,30 +83,33 @@ Item {
                     name: "full"
                     PropertyChanges {
                         target: previewImage
-                        width: 256
-                        height: 256
+                        width: postBase.w
+                        height: postBase.h
                     }
-
                 }
 
             ]
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    if(parent.state == "preview")
+                    if(parent.state == "preview"){
                         parent.state = "full"
-                    else if(parent.state == "full")
+                        redrawPost(128)
+                    }
+                    else if(parent.state == "full"){
                         parent.state = "preview"
-                    console.log("clicked, state == "+parent.state)
+                        redrawPost(0)
+                    }
                 }
 
             }
 
             Component.onCompleted: {
                 if(postBase.ext.length > 0){
-                    if(postBase.ext != ".webm")
-                    previewImage.state = "preview"
-                    previewImage.source = "http://i.4cdn.org/tv/"+tim+ext;
+                    if(postBase.ext.trim() != ".webm"){
+                        previewImage.state = "preview"
+                        previewImage.source = "http://i.4cdn.org/tv/"+tim+ext;
+                    }
                 }
             }
         }
@@ -116,22 +128,28 @@ Item {
         }
     }
 
+
     Component.onCompleted: {
-        var totalContentWidth = 9 + comText.contentWidth + nameText.contentWidth + noText.contentWidth;
+        redrawPost();
+    }
+
+    function redrawPost()
+    {
+        var totalContentWidth = 9 + comText.contentWidth + nameText.contentWidth + noText.contentWidth + previewImage.width;
         var totalTextContentHeight = 9 + comText.contentHeight + nameText.contentHeight + 9
-        var imageHeight = 0
-        if(postBase.ext.length > 0)
-        {
-            imageHeight = 128
-        }
-        var totalImageContentHeight = 9 + imageHeight + nameText.contentHeight + 9
+        var totalImageContentHeight = 9 + previewImage.height + nameText.contentHeight + 9
 
         if(totalContentWidth < 1920) {
             postBase.width = Math.max(300,totalContentWidth + 30)
         }
-        if(totalTextContentHeight > postBase.height || totalImageContentHeight > postBase.height){
+        if(totalTextContentHeight > postBase.height || totalImageContentHeight > postBase.height || totalImageContentHeight > 92){
             postBase.height = Math.max(totalTextContentHeight, totalImageContentHeight)
         }
+        else{
+            postBase.height = 92
+        }
+
+        postBackGround.update();
     }
 
 }
