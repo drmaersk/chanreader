@@ -11,10 +11,10 @@ ScrollView {
     }
 
     state: contentPanel.state
+
     width: contentPanel.width
 
-    horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-
+    //horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOn
     Rectangle {
         id: threadBackGroundColor
         color: "#FFB84D"
@@ -32,25 +32,22 @@ ScrollView {
                 contentPanel.viewSingleThread(baseThread.threadId)
             }
         }
-
     }
 
-    Column {
-        id: postContainer
-        spacing: 5
-        Repeater {
-            id: postContainerRepeater
-            model: postData
-            delegate: Post {
-                no: modelData.no
-                name: modelData.name ? modelData.name : ""
-                com: modelData.com ? modelData.com : ""
-                ext: modelData.ext ? modelData.ext : ""
-                tim: modelData.tim ? modelData.tim : ""
-                trip: modelData.trip ? modelData.trip : ""
-                w: modelData.w ? modelData.w : ""
-                h: modelData.h ? modelData.h : ""
-            }
+
+    ListView {
+        id: postContainerListView
+        model: postData
+        spacing: 3
+        delegate: Post {
+            no: modelData.no
+            name: modelData.name ? modelData.name : ""
+            com: modelData.com ? modelData.com : ""
+            ext: modelData.ext ? modelData.ext : ""
+            tim: modelData.tim ? modelData.tim : ""
+            trip: modelData.trip ? modelData.trip : ""
+            w: modelData.w ? modelData.w : ""
+            h: modelData.h ? modelData.h : ""
         }
     }
 
@@ -88,7 +85,4 @@ ScrollView {
 
     }
 
-
-
 }
-

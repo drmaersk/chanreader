@@ -44,12 +44,9 @@ Item {
         }
     ]
     onStateChanged: {
-        console.log("currentState: " + state)
         if(state == "frontPage") {
-            //use webService
             ChanApi.request(function ()
             {
-                console.log("httpRequest done")
                 frontPage.threadData = ChanApi.getThreads();
             }
             );
@@ -66,11 +63,9 @@ Item {
 
     function viewSingleThread(threadId)
     {
-        console.log("I wanna see " + threadId)
         state = "thread"
         ChanApi.requestThread(threadId, function ()
         {
-            console.log("httpRequest get Single thread done")
             mainThread.postData = ChanApi.getSingleThread()
 
         }

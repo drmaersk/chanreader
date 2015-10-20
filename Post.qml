@@ -94,11 +94,11 @@ Item {
                 onClicked: {
                     if(parent.state == "preview"){
                         parent.state = "full"
-                        redrawPost(128)
+                        redrawPost()
                     }
                     else if(parent.state == "full"){
                         parent.state = "preview"
-                        redrawPost(0)
+                        redrawPost()
                     }
                 }
 
@@ -122,6 +122,7 @@ Item {
             anchors.topMargin: 5
             anchors.top: noText.bottom
             anchors.left: previewImage.right
+            //anchors.right: parent.right //TODO: testing
             textFormat: Text.RichText
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 
@@ -139,9 +140,15 @@ Item {
         var totalTextContentHeight = 9 + comText.contentHeight + nameText.contentHeight + 9
         var totalImageContentHeight = 9 + previewImage.height + nameText.contentHeight + 9
 
-        if(totalContentWidth < 1920) {
+//        if(totalContentWidth < 1920) {
             postBase.width = Math.max(300,totalContentWidth + 30)
-        }
+
+//        }
+//        else{
+//            postBase.width = 900
+//        }
+        //comText.width = postBase.width - 30 - previewImage.width//TODO: testing
+
         if(totalTextContentHeight > postBase.height || totalImageContentHeight > postBase.height || totalImageContentHeight > 92){
             postBase.height = Math.max(totalTextContentHeight, totalImageContentHeight)
         }
