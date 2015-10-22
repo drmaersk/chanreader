@@ -35,9 +35,11 @@ ScrollView {
     }
 
 
-    ListView {
+
+       ListView {
         id: postContainerListView
         model: postData
+        clip: true
         spacing: 3
         delegate: Post {
             no: modelData.no

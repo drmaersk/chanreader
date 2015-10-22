@@ -30,3 +30,24 @@ url is both to other posts and external
 
 ThreadStackPanel shows history of recently opened Threads as a stack.
 Should be able to switch between threads here and also show 404 when a thread is dead.
+
+UI the Post should be able to expand and shrink to content
+The post should not expand more than current width of window
+The Image needs to be handled in some way to support webm and gif
+Image needs to also depend on the max width of window as it is inside the post.
+
+Caching threads:
+CRUD threads and structure:
+Only thing that needs saved as files are the images:
+Filestructure:
+Board
+|
+|-Thread
+  |
+  |-images
+  
+DataBase Structure:
+Thread PK(?)
+Post FK(Thread) -> PostInfo, Path to Image.
+One Db per board?
+
