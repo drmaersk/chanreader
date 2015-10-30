@@ -42,12 +42,29 @@ Only thing that needs saved as files are the images:
 Filestructure:
 Board
 |
-|-Thread
+|-Date
   |
-  |-images
+  |-Thread
+    |
+    |-images
   
 DataBase Structure:
-Thread PK(?)
+Board - Thread
+Thread PK(?) - Date
 Post FK(Thread) -> PostInfo, Path to Image.
 One Db per board?
+
+
+FileDownloader should take a list of files (per thread)and download them, start thread for each http call
+input should be the list of files (http urls), and the directory in which to put them.
+
+User should be able to input where the root of the filestructure should be.
+User should be able to import old filestructure to new installation.
+User should be able to switch between different caching options.
+1. Automatically save everything.
+2. Only pre-fetch/cache images but delete them when closing app.
+3. Manually save images only (No automatic saving).
+
+
+
 
