@@ -122,7 +122,6 @@ Flickable {
             anchors.topMargin: 5
             anchors.top: noText.bottom
             anchors.left: previewImage.right
-            //anchors.right: parent.right //TODO: testing
             textFormat: Text.RichText
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
 

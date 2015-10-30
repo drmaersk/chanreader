@@ -25,7 +25,7 @@ ApplicationWindow {
     Menu {
         title: "File"
         MenuItem {text: "save"}
-        MenuItem {text: "load"}
+        MenuItem {text: "load"} //TODO: On open: Thread organizer, sort, delete and rate threads. Structure: First select board then a table of threads come up.
         MenuItem {text: "exit"
             onTriggered: window.close()}
     }
@@ -38,7 +38,7 @@ toolBar: ToolBar {
     RowLayout {
         anchors.fill: parent
         ToolButton {
-            text: "/b/"
+            text: "/tv/"
             onClicked: contentPanel.switchState(); //TODO: For testing remove
         }
         ToolButton {
@@ -58,17 +58,10 @@ ContentPanel {
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.bottom: parent.bottom
-    anchors.right: threadStackPanel.left
+    anchors.right: parent.right
     anchors.margins: 3
 }
 
+}
 
-ThreadStackPanel {
-    id: threadStackPanel
-    width: parent.width * 0.1
-    anchors.top: parent.top
-    anchors.right: parent.right
-    anchors.bottom: parent.bottom
-}
-}
 

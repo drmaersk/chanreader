@@ -2,7 +2,7 @@
 var _threads
 var _singleThread
 
-function request(httpRequestDoneCallback) {
+function requestPage(httpRequestDoneCallback) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.HEADERS_RECEIVED) {
