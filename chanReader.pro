@@ -6,7 +6,9 @@ CONFIG += c++11
 SOURCES += main.cpp \
     filedownloader.cpp \
     postparser.cpp \
-    databasehandler.cpp
+    databasehandler.cpp \
+    webserviceclient.cpp \
+    controller.cpp
 
 RESOURCES += qml.qrc
 
@@ -21,7 +23,9 @@ include(deployment.pri)
 HEADERS += \
     filedownloader.h \
     postparser.h \
-    databasehandler.h
+    databasehandler.h \
+    webserviceclient.h \
+    controller.h
 
 DISTFILES +=
 

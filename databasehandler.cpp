@@ -13,9 +13,18 @@ DataBaseHandler::DataBaseHandler()
     else
     {
         QSqlQuery query(m_db);
-        query.exec("CREATE TABLE IF NOT EXISTS boardtothreads (board STRING, thread STRING, UNIQUE(thread))");
-        query.exec("CREATE TABLE IF NOT EXISTS threads (no STRING, date DATETIME, UNIQUE(no))");
-        query.exec("CREATE TABLE IF NOT EXISTS post (no STRING, com STRING)");
+        if(!query.exec("CREATE TABLE IF NOT EXISTS boardtothreads (board STRING, thread STRING, UNIQUE(thread))"))
+        {
+            qDebug() << query.lastError().text();
+        }
+        if(!query.exec("CREATE TABLE IF NOT EXISTS threads (no STRING, date DATETIME, UNIQUE(no))"))
+        {
+            qDebug() << query.lastError().text();
+        }
+        if(!query.exec("CREATE TABLE IF NOT EXISTS post (no STRING, com STRING)"))
+        {
+            qDebug() << query.lastError().text();
+        }
     }
 }
 
@@ -36,6 +45,6 @@ void DataBaseHandler::insertThreadInDatabase(QString board, QString date, QStrin
 
 
 
-    //query.exec("CREATE TABLE IF NOT EXISTS post (no STRING, com STRING)");
+            //query.exec("CREATE TABLE IF NOT EXISTS post (no STRING, com STRING)");
 }
 

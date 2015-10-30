@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
 #include <QQmlContext>
-#include <filedownloader.h>
+#include <controller.h>
 
 int main(int argc, char *argv[])
 {
@@ -10,9 +10,9 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    FileDownloader fd;
+    Controller c;
 
-    engine.rootContext()->setContextProperty("fileDownloaderCpp",&fd);
+    engine.rootContext()->setContextProperty("controllerCpp",&c);
 
     engine.load(QUrl(QStringLiteral("qrc:/4chanPrototype.qml")));
 

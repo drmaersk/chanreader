@@ -1,5 +1,5 @@
-#ifndef FILEDOWNLOADER_H
-#define FILEDOWNLOADER_H
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
 #include <QObject>
 #include <QByteArray>
@@ -10,23 +10,19 @@
 #include "postparser.h"
 #include "databasehandler.h"
 #include "webserviceclient.h" //TODO: remove
+#include <QThread>
 
-class FileDownloader : public QObject
+class Controller : public QObject
 {
  Q_OBJECT
 public:
-  FileDownloader(QObject *parent = 0);
-  Q_INVOKABLE void download(QUrl url);
-  Q_PROPERTY(QJsonArray postList READ postList WRITE setPostList)
-  Q_PROPERTY(QJsonValue thread READ thread WRITE setThread)
+  Controller(QObject *parent = 0);
+  Q_INVOKABLE void downloadFrontPage();
+  Q_INVOKABLE void downloadThread(QString threadId);
+  Q_INVOKABLE QJsonArray getFrontPage();
+  Q_INVOKABLE QJsonValue getThread();
   Q_PROPERTY(QString currentBoardDirectory READ currentBoardDirectory WRITE setCurrentBoardDirectory)
   Q_PROPERTY(QString baseDirectory READ baseDirectory WRITE setBaseDirectory)
-  //
- QJsonArray postList() const;
- void setPostList(QJsonArray n_postlist);
-
- QJsonValue thread () const;
- void setThread(QJsonValue n_thread);
 
  QString currentBoardDirectory() const;
  void setCurrentBoardDirectory(const QString &currentBoardDirectory);
@@ -35,24 +31,23 @@ public:
  void setBaseDirectory(const QString &baseDirectory);
 
 signals:
- Q_SIGNAL void filesDownloaded();
+ Q_SIGNAL void frontPageDownloaded();
+ Q_SIGNAL void threadDownloaded();
 
 private slots:
- void fileDownloaded(QNetworkReply* pReply);
+ void threadDownloaded(bool success);
+ void frontPageDownloaded(bool success);
 
  private:
-  QNetworkAccessManager m_WebCtrl;
-  QJsonArray m_imgsToDl;
-  QByteArray m_DownloadedData;
-  QJsonArray m_postList;
-  QJsonValue m_thread;
   QString m_currentBoardDirectory;
   QString m_baseDirectory;
   PostParser m_postParser;
-  int m_outStandingRequests;
-  int m_receivedRequests;
   DataBaseHandler m_dataBaseHandler;
   WebServiceClient m_wc;
+  QJsonArray m_currentFrontPage;
+  QJsonValue m_currentThread;
 };
 
-#endif // FILEDOWNLOADER_H
+
+
+#endif // CONTROLLER_H

@@ -22,7 +22,7 @@ Item {
     states: [
         State
         {
-            name: "thread"
+            name: "threadReady"
             PropertyChanges {
                 target: mainThread
                 opacity: 1.0
@@ -60,7 +60,7 @@ Item {
         },
         State
         {
-            name: "frontPage"
+            name: "frontPageReady"
             PropertyChanges {
                 target: mainThread
                 opacity: 0.0
@@ -99,42 +99,43 @@ Item {
     ]
 
     onStateChanged: {
-        if(state == "frontPage") {
+        if(state == "frontPageReady") {
             //todo:
+            //frontPage.threadData = controllerCpp.getFrontPage();
+            console.log("frontPageReady")
         }
         else if(state == "frontPageBusy")
         {
-                ChanApi.requestPage(function ()
-                {
-                    frontPage.threadData = ChanApi.getThreads();
-                    fileDownloaderCpp.postList = ChanApi.getThreads();
-                }
-            );
+            controllerCpp.downloadFrontPage();
+
+        }
+        else if(state == "threadReady")
+        {
+            mainThread.postData = controllerCpp.getThread();
+        }
+        else if(state == "threadBusy")
+        {
+          //handled in function viewSingleThread(threadId)
         }
     }
 
+
     Connections {
-        target: fileDownloaderCpp
-        onFilesDownloaded: switchState()
+        target: controllerCpp
+        onFrontPageDownloaded: {state = "frontPageReady";}
+        onThreadDownloaded:    {state = "threadReady";}
     }
 
     function switchState()
     {
-        if(state == "frontPageBusy")
-            state = "frontPage"
-        else if(state == "threadBusy")
-            state = "thread"
+        if(state == "threadReady")
+            state = "frontPageBusy"
     }
 
     function viewSingleThread(threadId)
     {
-        state = "threadBusy"
-        ChanApi.requestThread(threadId, function ()
-        {
-            mainThread.postData = ChanApi.getSingleThread()
-            fileDownloaderCpp.thread = ChanApi.getSingleThread()
-        }
-        );
+        state = "threadBusy";
+        controllerCpp.downloadThread(threadId);
     }
 }
 

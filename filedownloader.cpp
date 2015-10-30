@@ -14,9 +14,11 @@ FileDownloader::FileDownloader(QObject *parent) :
     m_postParser(),
     m_outStandingRequests(0),
     m_receivedRequests(0),
-    m_dataBaseHandler()
+    m_dataBaseHandler(),
+    m_wc(parent)
 {
     qDebug() << "Constructor";
+    m_wc.getFrontPage("");//todo remove
 }
 
 QJsonArray FileDownloader::postList() const {
@@ -79,16 +81,16 @@ void FileDownloader::fileDownloaded(QNetworkReply* pReply)
         return;
     }
 
-    //qDebug() << "FileDownloaded " << pReply->size();
-    //qDebug() << "url: " << pReply->url().toString().split("http://i.4cdn.org/tv/")[1];
     QString fileName = pReply->url().toString().split("http://i.4cdn.org/tv/")[1];
     m_DownloadedData = pReply->readAll();
     //emit a signal
     //BaseDir + boardDir + date + threadDir + filename
+    //TODO: currentDirectory should be provided from controller
     QString currentDate = QDateTime::currentDateTime().toString("yyyy-MM-dd");
     QString threadNo = m_postParser.getThreadNoFromImage(fileName);
     QString currentDirectory = m_baseDirectory + m_currentBoardDirectory + currentDate + QDir::separator() + threadNo + QDir::separator();
-    //m_dataBaseHandler.insertThreadInDatabase("tv",currentDate,threadNo); TODO: fix probrem now
+
+    //m_dataBaseHandler.insertThreadInDatabase("tv",currentDate,threadNo); //TODO: fix probrem now TODO: signal to controller, controller tells db
     if(!QDir(currentDirectory).exists())
     {
         QDir().mkpath(currentDirectory);
