@@ -2,44 +2,79 @@
 
 WebServiceClient::WebServiceClient(QObject *parent) :
     QObject(parent),
-    m_WebCtrl()
+    m_WebCtrl(),
+    m_currentPage(),
+    m_currentThread()
 {
-
-}
-
-QJsonArray WebServiceClient::getFrontPage(QString board)
-{
-    //xhr.open("GET", "http://a.4cdn.org/tv/1.json");
     connect(&m_WebCtrl,
             SIGNAL (finished(QNetworkReply*)),
             this,
-            SLOT (frontPageDownloaded(QNetworkReply*)));
+            SLOT (downloadFinished(QNetworkReply*)));
+}
+
+void WebServiceClient::downloadFrontPageJson(QString board)
+{
+    //xhr.open("GET", "http://a.4cdn.org/tv/1.json");
+
 
     QNetworkRequest req = QNetworkRequest(QUrl("http://a.4cdn.org/tv/1.json"));
     m_WebCtrl.get(req);
-    QJsonArray array;
-    return array;
 }
 
-void WebServiceClient::frontPageDownloaded(QNetworkReply* pReply)
+void WebServiceClient::downloadThreadJson(QString threadNo)
 {
-    qDebug() << "frontPageDownloaded";
+    QNetworkRequest req = QNetworkRequest(QUrl("http://a.4cdn.org/tv/thread/"+threadNo+".json"));
+    m_WebCtrl.get(req);
+}
+
+QJsonArray WebServiceClient::getFrontPageJson()
+{
+    return m_currentPage;
+}
+
+QJsonArray WebServiceClient::getThreadJson()
+{
+    return m_currentThread;
+}
+
+void WebServiceClient::downloadFinished(QNetworkReply* pReply)
+{
+    qDebug() << "Network reply received";
     if(pReply->size() == 0) //Get multiple QNetWorkReply per request
     {
         return;
     }
+
     QJsonDocument doc = QJsonDocument::fromJson(pReply->readAll());
 
-    if(doc.isObject())
+    if(doc.isArray())
     {
-        qDebug() << doc.object();
-    }
-    else if(doc.isArray())
-    {
+        qDebug() << "Received array";
         qDebug() << doc.array();
     }
-    else{
+    else if(doc.isObject())
+    {
+        QJsonObject obj = doc.object();
+        if(!obj["threads"].isNull())
+        {
+            qDebug() << "Received frontPage";
+            //qDebug() << obj;
+            m_currentPage = obj["threads"].toArray();
+            emit(frontPageDownloaded(true));
+        }
+        else if(!obj["posts"].isNull())
+        {
+            qDebug() << "Received thread";
+            //qDebug() << obj;
+            m_currentThread = obj["posts"].toArray();
+            emit(threadDownloaded(true));
+        }
+    }
+    else
+    {
         qDebug() << "ERROR Parsing JSON reply";
     }
 
 }
+
+

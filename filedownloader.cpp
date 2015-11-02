@@ -11,64 +11,29 @@ FileDownloader::FileDownloader(QObject *parent) :
     QObject(parent),
     m_currentBoardDirectory("tv/"), //TODO: default == b
     m_baseDirectory("C:/tmp/"), //TODO: default??
-    m_postParser(),
     m_outStandingRequests(0),
-    m_receivedRequests(0),
-    m_dataBaseHandler(),
-    m_wc(parent)
+    m_receivedRequests(0)
 {
     qDebug() << "Constructor";
-    m_wc.getFrontPage("");//todo remove
+    connect(&m_WebCtrl,
+            SIGNAL (finished(QNetworkReply*)),
+            this,
+            SLOT (fileDownloaded(QNetworkReply*)));
 }
 
-QJsonArray FileDownloader::postList() const {
-    return m_postList;
-}
 
-
-
-void FileDownloader::setPostList(QJsonArray n_postlist)
+void FileDownloader::downloadFiles(QStringList fileNames)
 {
-    qDebug() << "setPostList############ ";
-    m_postList = n_postlist;
-    QStringList images = m_postParser.getImageUrlsFromPostList(n_postlist);
-    m_outStandingRequests = images.size();
+    m_outStandingRequests = fileNames.size();
     m_receivedRequests = 0;
-    foreach(const QString &image, images) {
-        QUrl url = "http://i.4cdn.org/tv/" +image;
-        //qDebug() << url;
-        download(url);
-        //QFuture<void> thread = QtConcurrent::run(this, &FileDownloader::download, url);
-        //thread.waitForFinished();
-    }
-}
-
-QJsonValue FileDownloader::thread() const {
-    return m_thread;
-}
-
-void FileDownloader::setThread(QJsonValue n_thread)
-{
-    qDebug() << "setThread############";
-    m_thread = n_thread;
-    QStringList images = m_postParser.getImageUrlsFromThread(n_thread);
-    m_outStandingRequests = images.size();
-    m_receivedRequests = 0;
-    foreach(const QString &image, images) {
-        QUrl url = "http://i.4cdn.org/tv/" +image;
-        //qDebug() << url;
+    foreach(const QString &fileName, fileNames) {
+        QUrl url = "http://i.4cdn.org/tv/" +fileName;
         download(url);
     }
 }
-
 
 void FileDownloader::download(QUrl imageUrl)
 {
-    connect(
-                &m_WebCtrl, SIGNAL (finished(QNetworkReply*)),
-                this, SLOT (fileDownloaded(QNetworkReply*))
-                );
-
     QNetworkRequest request(imageUrl);
     request.setOriginatingObject(this);
     m_WebCtrl.get(request);
@@ -87,10 +52,9 @@ void FileDownloader::fileDownloaded(QNetworkReply* pReply)
     //BaseDir + boardDir + date + threadDir + filename
     //TODO: currentDirectory should be provided from controller
     QString currentDate = QDateTime::currentDateTime().toString("yyyy-MM-dd");
-    QString threadNo = m_postParser.getThreadNoFromImage(fileName);
+    QString threadNo;//TODO:
     QString currentDirectory = m_baseDirectory + m_currentBoardDirectory + currentDate + QDir::separator() + threadNo + QDir::separator();
 
-    //m_dataBaseHandler.insertThreadInDatabase("tv",currentDate,threadNo); //TODO: fix probrem now TODO: signal to controller, controller tells db
     if(!QDir(currentDirectory).exists())
     {
         QDir().mkpath(currentDirectory);
@@ -116,19 +80,9 @@ void FileDownloader::fileDownloaded(QNetworkReply* pReply)
     pReply->deleteLater();
 }
 
-QString FileDownloader::baseDirectory() const
-{
-    return m_baseDirectory;
-}
-
 void FileDownloader::setBaseDirectory(const QString &baseDirectory)
 {
     m_baseDirectory = baseDirectory;
-}
-
-QString FileDownloader::currentBoardDirectory() const
-{
-    return m_currentBoardDirectory;
 }
 
 void FileDownloader::setCurrentBoardDirectory(const QString &currentBoard)

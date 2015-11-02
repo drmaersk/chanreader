@@ -101,7 +101,7 @@ Item {
     onStateChanged: {
         if(state == "frontPageReady") {
             //todo:
-            //frontPage.threadData = controllerCpp.getFrontPage();
+            frontPage.threadData = controllerCpp.getFrontPage();
             console.log("frontPageReady")
         }
         else if(state == "frontPageBusy")

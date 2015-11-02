@@ -17,21 +17,11 @@ class FileDownloader : public QObject
 public:
   FileDownloader(QObject *parent = 0);
   Q_INVOKABLE void download(QUrl url);
-  Q_PROPERTY(QJsonArray postList READ postList WRITE setPostList)
-  Q_PROPERTY(QJsonValue thread READ thread WRITE setThread)
-  Q_PROPERTY(QString currentBoardDirectory READ currentBoardDirectory WRITE setCurrentBoardDirectory)
-  Q_PROPERTY(QString baseDirectory READ baseDirectory WRITE setBaseDirectory)
-  //
- QJsonArray postList() const;
- void setPostList(QJsonArray n_postlist);
 
- QJsonValue thread () const;
- void setThread(QJsonValue n_thread);
+ void downloadFiles(QStringList fileNames);
 
- QString currentBoardDirectory() const;
  void setCurrentBoardDirectory(const QString &currentBoardDirectory);
 
- QString baseDirectory() const;
  void setBaseDirectory(const QString &baseDirectory);
 
 signals:
@@ -48,11 +38,8 @@ private slots:
   QJsonValue m_thread;
   QString m_currentBoardDirectory;
   QString m_baseDirectory;
-  PostParser m_postParser;
   int m_outStandingRequests;
   int m_receivedRequests;
-  DataBaseHandler m_dataBaseHandler;
-  WebServiceClient m_wc;
 };
 
 #endif // FILEDOWNLOADER_H

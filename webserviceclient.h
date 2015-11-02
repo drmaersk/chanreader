@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QJsonValue>
 #include <QDebug>
 
 class WebServiceClient : public QObject
@@ -14,13 +15,22 @@ class WebServiceClient : public QObject
     Q_OBJECT
 public:
     WebServiceClient(QObject *parent = 0);
-    QJsonArray getFrontPage(QString board);
+    void downloadFrontPageJson(QString board);
+    void downloadThreadJson(QString threadNo);
 
+    QJsonArray getFrontPageJson();
+    QJsonArray getThreadJson();
+
+signals:
+ Q_SIGNAL void frontPageDownloaded(bool success);
+ Q_SIGNAL void threadDownloaded(bool success);
 
 private slots:
-    void frontPageDownloaded(QNetworkReply* pReply);
+    void downloadFinished(QNetworkReply* pReply);
 private:
     QNetworkAccessManager m_WebCtrl;
+    QJsonArray m_currentPage;
+    QJsonArray m_currentThread;
 };
 
 #endif // WEBSERVICECLIENT_H

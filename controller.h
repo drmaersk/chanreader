@@ -20,7 +20,7 @@ public:
   Q_INVOKABLE void downloadFrontPage();
   Q_INVOKABLE void downloadThread(QString threadId);
   Q_INVOKABLE QJsonArray getFrontPage();
-  Q_INVOKABLE QJsonValue getThread();
+  Q_INVOKABLE QJsonArray getThread();
   Q_PROPERTY(QString currentBoardDirectory READ currentBoardDirectory WRITE setCurrentBoardDirectory)
   Q_PROPERTY(QString baseDirectory READ baseDirectory WRITE setBaseDirectory)
 
@@ -45,7 +45,7 @@ private slots:
   DataBaseHandler m_dataBaseHandler;
   WebServiceClient m_wc;
   QJsonArray m_currentFrontPage;
-  QJsonValue m_currentThread;
+  QJsonArray m_currentThread;
 };
 
 
