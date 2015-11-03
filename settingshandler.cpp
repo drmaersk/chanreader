@@ -17,7 +17,7 @@ void SettingsHandler::initSettings()
         m_settings.endGroup();
         m_settings.beginGroup("UserSettings");
         m_settings.setValue("currentBoard", "tv");
-        m_settings.setValue("baseDirectory", "C:/tmp");
+        m_settings.setValue("imageDirectory", QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
         m_settings.endGroup();
         m_settings.beginGroup("BoardUrl");
         m_settings.setValue("tv",  "4cdn.org/tv/");
@@ -55,6 +55,7 @@ QString SettingsHandler::getImageUrl()
     return currentImageUrl;
 }
 
+//TODO: refactor to not have "BoardUrl" group move url handling to webclient
 QString SettingsHandler::getBoardUrl()
 {
     QString boardKey = getCurrentBoard();

@@ -12,6 +12,8 @@
 #include "webserviceclient.h" //TODO: remove
 #include <QThread>
 #include "settingshandler.h"
+#include "threaddownloader.h"
+
 class Controller : public QObject
 {
  Q_OBJECT

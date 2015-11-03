@@ -6,6 +6,7 @@
 #include <QtSql/QSqlQuery>
 #include <QDir>
 #include <QtDebug>
+#include <QStandardPaths>
 
 class DataBaseHandler
 {

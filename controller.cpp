@@ -90,7 +90,13 @@ void Controller::frontPageDownloaded(bool success)
     if(success)
     {
         m_currentFrontPage = m_wc.getFrontPageJson();
-        //qDebug() << m_postParser.getImageUrlsFromFrontPage(m_currentFrontPage);
+        qDebug() << m_postParser.getImageUrlsFromFrontPage(m_currentFrontPage);
+        ThreadDownloader* td = new ThreadDownloader(this);
+        connect(td,
+                &ThreadDownloader::finished,
+                td,
+                &QObject::deleteLater);
+        td->start();
         emit frontPageDownloaded();
     }
 }
