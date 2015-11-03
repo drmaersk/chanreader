@@ -8,7 +8,9 @@ SOURCES += main.cpp \
     postparser.cpp \
     databasehandler.cpp \
     webserviceclient.cpp \
-    controller.cpp
+    controller.cpp \
+    threaddownloader.cpp \
+    settingshandler.cpp
 
 RESOURCES += qml.qrc
 
@@ -25,7 +27,9 @@ HEADERS += \
     postparser.h \
     databasehandler.h \
     webserviceclient.h \
-    controller.h
+    controller.h \
+    threaddownloader.h \
+    settingshandler.h
 
 DISTFILES +=
 

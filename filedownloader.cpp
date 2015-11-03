@@ -7,14 +7,18 @@
 #include <QDir>
 #include <QDateTime>
 
-FileDownloader::FileDownloader(QObject *parent) :
+FileDownloader::FileDownloader(QObject *parent,
+                               const QString baseUrl,
+                               const QString fileName,
+                               const QString directory) :
     QObject(parent),
-    m_currentBoardDirectory("tv/"), //TODO: default == b
-    m_baseDirectory("C:/tmp/"), //TODO: default??
-    m_outStandingRequests(0),
-    m_receivedRequests(0)
+    m_baseUrl(baseUrl),
+    m_fileName(fileName),
+    m_currentDirectory(directory) //TODO: default??
 {
     qDebug() << "Constructor";
+    QString url = baseUrl+fileName;
+    m_fileUrl.setUrl(url);
     connect(&m_WebCtrl,
             SIGNAL (finished(QNetworkReply*)),
             this,
@@ -22,45 +26,28 @@ FileDownloader::FileDownloader(QObject *parent) :
 }
 
 
-void FileDownloader::downloadFiles(QStringList fileNames)
+void FileDownloader::download()
 {
-    m_outStandingRequests = fileNames.size();
-    m_receivedRequests = 0;
-    foreach(const QString &fileName, fileNames) {
-        QUrl url = "http://i.4cdn.org/tv/" +fileName;
-        download(url);
-    }
-}
-
-void FileDownloader::download(QUrl imageUrl)
-{
-    QNetworkRequest request(imageUrl);
+    QNetworkRequest request(m_fileUrl);
     request.setOriginatingObject(this);
     m_WebCtrl.get(request);
 }
 
 void FileDownloader::fileDownloaded(QNetworkReply* pReply)
 {
-    if(pReply->size() == 0) //Get multiple QNetWorkReply per request
+    if(pReply->size() == 0 || pReply->request().originatingObject() != this) //Get multiple QNetWorkReply per request
     {
         return;
     }
 
-    QString fileName = pReply->url().toString().split("http://i.4cdn.org/tv/")[1];
     m_DownloadedData = pReply->readAll();
-    //emit a signal
-    //BaseDir + boardDir + date + threadDir + filename
-    //TODO: currentDirectory should be provided from controller
-    QString currentDate = QDateTime::currentDateTime().toString("yyyy-MM-dd");
-    QString threadNo;//TODO:
-    QString currentDirectory = m_baseDirectory + m_currentBoardDirectory + currentDate + QDir::separator() + threadNo + QDir::separator();
 
-    if(!QDir(currentDirectory).exists())
+    if(!QDir(m_currentDirectory).exists())
     {
-        QDir().mkpath(currentDirectory);
+        QDir().mkpath(m_currentDirectory);
     }
 
-    QFile file(currentDirectory +fileName);
+    QFile file(m_currentDirectory +m_fileName);
 
     if(!file.exists())
     {
@@ -69,25 +56,7 @@ void FileDownloader::fileDownloaded(QNetworkReply* pReply)
         file.close();
     }
 
-    ++m_receivedRequests;
-    int percent = ((double)m_receivedRequests) / ((double)m_outStandingRequests) * 100.0;
-    //qDebug() << "Outstanding requests == " << m_outStandingRequests << " Progress: " << percent << "%";
-    if(m_outStandingRequests == m_receivedRequests)
-    {
-        qDebug() << "Got them all";
-        emit filesDownloaded();
-    }
+    emit fileSaved();
     pReply->deleteLater();
 }
-
-void FileDownloader::setBaseDirectory(const QString &baseDirectory)
-{
-    m_baseDirectory = baseDirectory;
-}
-
-void FileDownloader::setCurrentBoardDirectory(const QString &currentBoard)
-{
-    m_currentBoardDirectory = currentBoard;
-}
-
 

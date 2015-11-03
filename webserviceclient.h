@@ -15,8 +15,8 @@ class WebServiceClient : public QObject
     Q_OBJECT
 public:
     WebServiceClient(QObject *parent = 0);
-    void downloadFrontPageJson(QString board);
-    void downloadThreadJson(QString threadNo);
+    void downloadThreadJson(QString boardUrl, QString threadNo);
+    void downloadFrontPageJson(QString boardUrl);
 
     QJsonArray getFrontPageJson();
     QJsonArray getThreadJson();

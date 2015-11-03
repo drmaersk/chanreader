@@ -10,8 +10,8 @@ class PostParser
 {
 public:
     PostParser();
-    QStringList getImageUrlsFromPostList(QJsonArray postList);
-    QStringList getImageUrlsFromThread(QJsonValue thread);
+    QStringList getImageUrlsFromFrontPage(QJsonArray threads);
+    QStringList getImageUrlsFromThread(const QJsonArray posts);
     QString getThreadNoFromImage(const QString &imageName) const;
 
 private:

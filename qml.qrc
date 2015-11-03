@@ -6,7 +6,6 @@
         <file>Post.qml</file>
         <file>Thread.qml</file>
         <file>ThreadStackPanel.qml</file>
-        <file>frontPageApi.js</file>
         <file>img/add2128.png</file>
         <file>img/forward32.png</file>
     </qresource>

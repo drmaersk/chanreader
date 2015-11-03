@@ -11,7 +11,7 @@
 #include "databasehandler.h"
 #include "webserviceclient.h" //TODO: remove
 #include <QThread>
-
+#include "settingshandler.h"
 class Controller : public QObject
 {
  Q_OBJECT
@@ -21,11 +21,13 @@ public:
   Q_INVOKABLE void downloadThread(QString threadId);
   Q_INVOKABLE QJsonArray getFrontPage();
   Q_INVOKABLE QJsonArray getThread();
-  Q_PROPERTY(QString currentBoardDirectory READ currentBoardDirectory WRITE setCurrentBoardDirectory)
+  Q_INVOKABLE QString boardUrl();
+  Q_INVOKABLE QString imageUrl();
+  Q_PROPERTY(QString currentBoard READ currentBoard WRITE setCurrentBoard)
   Q_PROPERTY(QString baseDirectory READ baseDirectory WRITE setBaseDirectory)
 
- QString currentBoardDirectory() const;
- void setCurrentBoardDirectory(const QString &currentBoardDirectory);
+ QString currentBoard();
+ void setCurrentBoard(const QString &currentBoardDirectory);
 
  QString baseDirectory() const;
  void setBaseDirectory(const QString &baseDirectory);
@@ -39,13 +41,12 @@ private slots:
  void frontPageDownloaded(bool success);
 
  private:
-  QString m_currentBoardDirectory;
-  QString m_baseDirectory;
   PostParser m_postParser;
   DataBaseHandler m_dataBaseHandler;
   WebServiceClient m_wc;
   QJsonArray m_currentFrontPage;
   QJsonArray m_currentThread;
+  SettingsHandler m_settings;
 };
 
 

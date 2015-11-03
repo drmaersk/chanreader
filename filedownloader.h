@@ -6,40 +6,33 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QJsonArray>
-#include "postparser.h"
-#include "databasehandler.h"
-#include "webserviceclient.h" //TODO: remove
+#include <QString>
+
+
 
 class FileDownloader : public QObject
 {
  Q_OBJECT
 public:
-  FileDownloader(QObject *parent = 0);
-  Q_INVOKABLE void download(QUrl url);
+  FileDownloader(QObject *parent = 0, const QString baseUrl = "", const QString fileName = "", const QString directory = "");
 
- void downloadFiles(QStringList fileNames);
+ void download();
 
- void setCurrentBoardDirectory(const QString &currentBoardDirectory);
-
- void setBaseDirectory(const QString &baseDirectory);
+ void downloadFile(QString fileName);
 
 signals:
- Q_SIGNAL void filesDownloaded();
+ Q_SIGNAL void fileSaved();
 
 private slots:
  void fileDownloaded(QNetworkReply* pReply);
 
  private:
   QNetworkAccessManager m_WebCtrl;
-  QJsonArray m_imgsToDl;
   QByteArray m_DownloadedData;
-  QJsonArray m_postList;
-  QJsonValue m_thread;
-  QString m_currentBoardDirectory;
-  QString m_baseDirectory;
-  int m_outStandingRequests;
-  int m_receivedRequests;
+  QString m_baseUrl;
+  QString m_fileName;
+  QString m_currentDirectory;
+  QUrl m_fileUrl;
 };
 
 #endif // FILEDOWNLOADER_H

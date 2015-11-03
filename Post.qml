@@ -108,7 +108,7 @@ Flickable {
                 if(postBase.ext.length > 0){
                     if(postBase.ext.trim() != ".webm"){
                         previewImage.state = "preview"
-                        previewImage.source = "http://i.4cdn.org/tv/"+tim+ext;
+                        previewImage.source = controllerCpp.imageUrl()+tim+ext;
                     }
                 }
             }

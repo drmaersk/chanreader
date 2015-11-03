@@ -1,18 +1,15 @@
 #include "postparser.h"
 
-
-
-//postList[0].toObject()["posts"].toArray()[0].toObject()["com"].toString();
 PostParser::PostParser() : m_imageToThreadMap()
 {
 
 }
 
-QStringList PostParser::getImageUrlsFromPostList(const QJsonArray postList)
+QStringList PostParser::getImageUrlsFromFrontPage(const QJsonArray threads)
 {
     QStringList imgFileNames;
     m_imageToThreadMap.clear();
-    foreach (const QJsonValue& thread, postList) {
+    foreach (const QJsonValue& thread, threads) {
         QJsonArray posts = thread.toObject()["posts"].toArray();
         imgFileNames += parsePosts(posts);
     }
@@ -20,10 +17,8 @@ QStringList PostParser::getImageUrlsFromPostList(const QJsonArray postList)
     return imgFileNames;
 }
 
-QStringList PostParser::getImageUrlsFromThread(const QJsonValue thread){
-    QJsonArray posts = thread.toArray();
+QStringList PostParser::getImageUrlsFromThread(const QJsonArray posts){
     m_imageToThreadMap.clear();
-
     return parsePosts(posts);
 }
 

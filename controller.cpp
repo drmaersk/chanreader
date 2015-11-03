@@ -2,13 +2,12 @@
 
 Controller::Controller(QObject *parent) :
     QObject(parent),
-    m_currentBoardDirectory("tv"),
-    m_baseDirectory("C:/tmp"),
     m_postParser(),
     m_dataBaseHandler(),
     m_wc(parent),
     m_currentFrontPage(),
-    m_currentThread()
+    m_currentThread(),
+    m_settings()
 {
     connect(&m_wc,
             SIGNAL (threadDownloaded(bool)),
@@ -18,18 +17,20 @@ Controller::Controller(QObject *parent) :
             SIGNAL (frontPageDownloaded(bool)),
             this,
             SLOT (frontPageDownloaded(bool)));
+    m_settings.setCurrentBoard("tv");
+    qDebug() << m_settings.getBoardUrl();
+
 }
 
 void Controller::downloadFrontPage()
 {
-    qDebug() << "downloadFrontPage";
-    m_wc.downloadFrontPageJson("");//TODO: take argument from settings
+    m_wc.downloadFrontPageJson(m_settings.getBoardUrl());//TODO: take argument from settings
 }
 
 void Controller::downloadThread(QString threadId)
 {
     qDebug() << "downloadThread";
-    m_wc.downloadThreadJson(threadId);
+    m_wc.downloadThreadJson(m_settings.getBoardUrl(), threadId);
 }
 
 QJsonArray Controller::getFrontPage()
@@ -42,12 +43,12 @@ QJsonArray Controller::getThread()
     return m_currentThread;
 }
 
-QString Controller::currentBoardDirectory() const
+QString Controller::currentBoard()
 {
-    return "todo";
+    return m_settings.getCurrentBoard();
 }
 
-void Controller::setCurrentBoardDirectory(const QString &currentBoardDirectory)
+void Controller::setCurrentBoard(const QString &currentBoard)
 {
 
 }
@@ -62,11 +63,24 @@ void Controller::setBaseDirectory(const QString &baseDirectory)
 
 }
 
+QString Controller::boardUrl()
+{
+    QString boardUrl = m_settings.getBoardUrl();
+    return boardUrl;
+}
+
+QString Controller::imageUrl()
+{
+    QString boardUrl = m_settings.getImageUrl();
+    return boardUrl;
+}
+
 void Controller::threadDownloaded(bool success)
 {
     if(success)
     {
         m_currentThread = m_wc.getThreadJson();
+        //qDebug() << m_postParser.getImageUrlsFromThread(m_currentThread);
         emit threadDownloaded();
     }
 }
@@ -76,6 +90,7 @@ void Controller::frontPageDownloaded(bool success)
     if(success)
     {
         m_currentFrontPage = m_wc.getFrontPageJson();
+        //qDebug() << m_postParser.getImageUrlsFromFrontPage(m_currentFrontPage);
         emit frontPageDownloaded();
     }
 }

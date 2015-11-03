@@ -12,18 +12,15 @@ WebServiceClient::WebServiceClient(QObject *parent) :
             SLOT (downloadFinished(QNetworkReply*)));
 }
 
-void WebServiceClient::downloadFrontPageJson(QString board)
+void WebServiceClient::downloadFrontPageJson(QString boardUrl)
 {
-    //xhr.open("GET", "http://a.4cdn.org/tv/1.json");
-
-
-    QNetworkRequest req = QNetworkRequest(QUrl("http://a.4cdn.org/tv/1.json"));
+    QNetworkRequest req = QNetworkRequest(QUrl(boardUrl+"1.json"));
     m_WebCtrl.get(req);
 }
 
-void WebServiceClient::downloadThreadJson(QString threadNo)
+void WebServiceClient::downloadThreadJson(QString boardUrl, QString threadNo)
 {
-    QNetworkRequest req = QNetworkRequest(QUrl("http://a.4cdn.org/tv/thread/"+threadNo+".json"));
+    QNetworkRequest req = QNetworkRequest(QUrl(boardUrl+"thread/"+threadNo+".json"));
     m_WebCtrl.get(req);
 }
 
@@ -49,8 +46,8 @@ void WebServiceClient::downloadFinished(QNetworkReply* pReply)
 
     if(doc.isArray())
     {
-        qDebug() << "Received array";
-        qDebug() << doc.array();
+        qDebug() << "ERROR: Received array";
+
     }
     else if(doc.isObject())
     {
@@ -58,7 +55,6 @@ void WebServiceClient::downloadFinished(QNetworkReply* pReply)
         if(!obj["threads"].isNull())
         {
             qDebug() << "Received frontPage";
-            //qDebug() << obj;
             m_currentPage = obj["threads"].toArray();
             emit(frontPageDownloaded(true));
         }
