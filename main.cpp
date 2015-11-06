@@ -6,6 +6,9 @@
 
 int main(int argc, char *argv[])
 {
+    //TODO: see if you can fix ssl instead of hiding problem
+    qputenv("QT_LOGGING_RULES", "qt.network.ssl.warning=false");
+
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;

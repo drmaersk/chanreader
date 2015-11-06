@@ -100,17 +100,17 @@ Item {
     onStateChanged: {
         if(state == "frontPageReady") {
             //todo:
-            frontPage.threadData = controllerCpp.getFrontPage();
+            frontPage.threadData = controllerCpp.getFrontPageJson();
             console.log("frontPageReady")
         }
         else if(state == "frontPageBusy")
         {
-            controllerCpp.downloadFrontPage();
+            controllerCpp.downloadFrontPageJson();
 
         }
         else if(state == "threadReady")
         {
-            mainThread.postData = controllerCpp.getThread();
+            mainThread.postData = controllerCpp.getThreadJson();
         }
         else if(state == "threadBusy")
         {
@@ -121,8 +121,8 @@ Item {
 
     Connections {
         target: controllerCpp
-        onFrontPageDownloaded: {state = "frontPageReady";}
-        onThreadDownloaded:    {state = "threadReady";}
+        onFrontPageJsonDownloaded: {state = "frontPageReady";}
+        onThreadJsonDownloaded:    {state = "threadReady";}
     }
 
     function switchState()
@@ -134,7 +134,7 @@ Item {
     function viewSingleThread(threadId)
     {
         state = "threadBusy";
-        controllerCpp.downloadThread(threadId);
+        controllerCpp.downloadThreadJson(threadId);
     }
 }
 

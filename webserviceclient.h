@@ -22,8 +22,8 @@ public:
     QJsonArray getThreadJson();
 
 signals:
- Q_SIGNAL void frontPageDownloaded(bool success);
- Q_SIGNAL void threadDownloaded(bool success);
+ Q_SIGNAL void frontPageJsonDownloaded(bool success);
+ Q_SIGNAL void threadJsonDownloaded(bool success);
 
 private slots:
     void downloadFinished(QNetworkReply* pReply);

@@ -15,6 +15,7 @@ public:
     QString getCurrentBoard();
     QString getBoardUrl();
     QString getImageUrl();
+    QString getImageDirectory();
 private:
     QString m_settingsFile;
     QSettings m_settings;

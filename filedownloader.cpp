@@ -3,20 +3,18 @@
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
-#include "QtConcurrent/qtconcurrentrun.h"
 #include <QDir>
 #include <QDateTime>
 
 FileDownloader::FileDownloader(QObject *parent,
                                const QString baseUrl,
                                const QString fileName,
-                               const QString directory) :
+                               const QString saveDirectory) :
     QObject(parent),
     m_baseUrl(baseUrl),
     m_fileName(fileName),
-    m_currentDirectory(directory) //TODO: default??
+    m_saveDirectory(saveDirectory)
 {
-    qDebug() << "Constructor";
     QString url = baseUrl+fileName;
     m_fileUrl.setUrl(url);
     connect(&m_WebCtrl,
@@ -29,25 +27,34 @@ FileDownloader::FileDownloader(QObject *parent,
 void FileDownloader::download()
 {
     QNetworkRequest request(m_fileUrl);
-    request.setOriginatingObject(this);
     m_WebCtrl.get(request);
+}
+
+void FileDownloader::downloadFile(QString fileName, QString pathToSave, QString baseUrl)
+{
+    m_baseUrl = baseUrl;
+    QString url = baseUrl+fileName;
+    m_fileUrl.setUrl(url);
+    m_fileName = fileName;
+    m_saveDirectory = pathToSave;
+    download();
 }
 
 void FileDownloader::fileDownloaded(QNetworkReply* pReply)
 {
-    if(pReply->size() == 0 || pReply->request().originatingObject() != this) //Get multiple QNetWorkReply per request
+    if(pReply->size() == 0) //Get multiple QNetWorkReply per request
     {
         return;
     }
 
     m_DownloadedData = pReply->readAll();
 
-    if(!QDir(m_currentDirectory).exists())
+    if(!QDir(m_saveDirectory).exists())
     {
-        QDir().mkpath(m_currentDirectory);
+        QDir().mkpath(m_saveDirectory);
     }
 
-    QFile file(m_currentDirectory +m_fileName);
+    QFile file(m_saveDirectory + m_fileName);
 
     if(!file.exists())
     {

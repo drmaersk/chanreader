@@ -56,14 +56,14 @@ void WebServiceClient::downloadFinished(QNetworkReply* pReply)
         {
             qDebug() << "Received frontPage";
             m_currentPage = obj["threads"].toArray();
-            emit(frontPageDownloaded(true));
+            emit(frontPageJsonDownloaded(true));
         }
         else if(!obj["posts"].isNull())
         {
             qDebug() << "Received thread";
             //qDebug() << obj;
             m_currentThread = obj["posts"].toArray();
-            emit(threadDownloaded(true));
+            emit(threadJsonDownloaded(true));
         }
     }
     else

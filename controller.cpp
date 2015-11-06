@@ -10,35 +10,34 @@ Controller::Controller(QObject *parent) :
     m_settings()
 {
     connect(&m_wc,
-            SIGNAL (threadDownloaded(bool)),
+            SIGNAL (threadJsonDownloaded(bool)),
             this,
-            SLOT (threadDownloaded(bool)));
+            SLOT (threadJsonDownloaded(bool)));
     connect(&m_wc,
-            SIGNAL (frontPageDownloaded(bool)),
+            SIGNAL (frontPageJsonDownloaded(bool)),
             this,
-            SLOT (frontPageDownloaded(bool)));
+            SLOT (frontPageJsonDownloaded(bool)));
     m_settings.setCurrentBoard("tv");
     qDebug() << m_settings.getBoardUrl();
-
 }
 
-void Controller::downloadFrontPage()
+void Controller::downloadFrontPageJson()
 {
-    m_wc.downloadFrontPageJson(m_settings.getBoardUrl());//TODO: take argument from settings
+    m_wc.downloadFrontPageJson(m_settings.getBoardUrl());
 }
 
-void Controller::downloadThread(QString threadId)
+void Controller::downloadThreadJson(QString threadId)
 {
     qDebug() << "downloadThread";
     m_wc.downloadThreadJson(m_settings.getBoardUrl(), threadId);
 }
 
-QJsonArray Controller::getFrontPage()
+QJsonArray Controller::getFrontPageJson()
 {
     return m_currentFrontPage;
 }
 
-QJsonArray Controller::getThread()
+QJsonArray Controller::getThreadJson()
 {
     return m_currentThread;
 }
@@ -75,28 +74,69 @@ QString Controller::imageUrl()
     return boardUrl;
 }
 
-void Controller::threadDownloaded(bool success)
+void Controller::threadJsonDownloaded(bool success)
 {
     if(success)
     {
         m_currentThread = m_wc.getThreadJson();
         //qDebug() << m_postParser.getImageUrlsFromThread(m_currentThread);
-        emit threadDownloaded();
+        emit threadJsonDownloaded();
     }
 }
 
-void Controller::frontPageDownloaded(bool success)
+void Controller::frontPageJsonDownloaded(bool success)
 {
     if(success)
     {
         m_currentFrontPage = m_wc.getFrontPageJson();
-        qDebug() << m_postParser.getImageUrlsFromFrontPage(m_currentFrontPage);
-        ThreadDownloader* td = new ThreadDownloader(this);
-        connect(td,
-                &ThreadDownloader::finished,
-                td,
+        QStringList imgUrls = m_postParser.getImageUrlsFromFrontPage(m_currentFrontPage);
+        //        qDebug() << "IMAGE SIZE:" << imgUrls.size();
+        downloadImages(imgUrls);
+        emit frontPageJsonDownloaded();
+    }
+}
+
+void Controller::downloadImages(QStringList fileUrls)
+{
+
+    //TODO: TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING
+    //    m_dbThread = new DatabaseHandlerThread(this);
+
+    //    connect(m_dbThread,
+    //            &DatabaseHandlerThread::finished,
+    //            m_dbThread,
+    //            &QObject::deleteLater);
+    //    m_dbThread->start();
+    //TODO: TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING
+
+    foreach(QString fileUrl, fileUrls)
+    {
+        QString threadNo = m_postParser.getThreadNoFromImage(fileUrl);
+        QString currentDate = QDateTime::currentDateTime().toString("yyyy-MM-dd");
+        QString savePath =
+                m_settings.getImageDirectory() + QDir::separator() +
+                currentDate + QDir::separator() +
+                threadNo + QDir::separator();
+
+        QThread* thread = new QThread(this);
+        FileDownloader* fd = new FileDownloader();
+        fd->moveToThread(thread);
+
+        connect(fd,
+                &FileDownloader::fileSaved,
+                thread,
+                &QThread::quit);
+
+        connect(thread,
+                &QThread::finished,
+                thread,
                 &QObject::deleteLater);
-        td->start();
-        emit frontPageDownloaded();
+
+        thread->start();
+
+        fd->downloadFile(fileUrl,
+                         savePath,
+                         m_settings.getImageUrl());
+
     }
 }

@@ -17,7 +17,7 @@ void SettingsHandler::initSettings()
         m_settings.endGroup();
         m_settings.beginGroup("UserSettings");
         m_settings.setValue("currentBoard", "tv");
-        m_settings.setValue("imageDirectory", QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
+        m_settings.setValue("imageDirectory", QStandardPaths::writableLocation(QStandardPaths::PicturesLocation) + QDir::separator() + "chanReader") ;
         m_settings.endGroup();
         m_settings.beginGroup("BoardUrl");
         m_settings.setValue("tv",  "4cdn.org/tv/");
@@ -66,4 +66,13 @@ QString SettingsHandler::getBoardUrl()
     QString currentBoardUrl = "http://a." + currentBoardUrlSuffix;
 
     return currentBoardUrl;
+}
+
+QString SettingsHandler::getImageDirectory()
+{
+    m_settings.beginGroup("UserSettings");
+    QString imageDirectory = m_settings.value("imageDirectory").toString();
+    m_settings.endGroup();
+
+    return imageDirectory;
 }

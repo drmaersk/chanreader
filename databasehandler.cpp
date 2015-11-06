@@ -4,6 +4,7 @@ DataBaseHandler::DataBaseHandler()
 {
     qDebug() << "DbConstructor";
     m_db = QSqlDatabase::addDatabase("QSQLITE");
+    qDebug() << QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     QString settingsDir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     m_db.setDatabaseName(settingsDir + QDir::separator() +"chanReaderDb.sqlite");
     if (!m_db.open())
