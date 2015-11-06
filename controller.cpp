@@ -1,4 +1,6 @@
 #include "controller.h"
+#include "filedownloader.h"
+#include <QGuiApplication> //TODO: Do this from parent
 
 Controller::Controller(QObject *parent) :
     QObject(parent),
@@ -19,6 +21,9 @@ Controller::Controller(QObject *parent) :
             SLOT (frontPageJsonDownloaded(bool)));
     m_settings.setCurrentBoard("tv");
     qDebug() << m_settings.getBoardUrl();
+
+    m_dbThread = new DatabaseHandlerThread(this);
+    m_dbThread->start();
 }
 
 void Controller::downloadFrontPageJson()
@@ -100,43 +105,50 @@ void Controller::downloadImages(QStringList fileUrls)
 {
 
     //TODO: TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING
-    //    m_dbThread = new DatabaseHandlerThread(this);
 
-    //    connect(m_dbThread,
-    //            &DatabaseHandlerThread::finished,
-    //            m_dbThread,
-    //            &QObject::deleteLater);
-    //    m_dbThread->start();
+
+
+
     //TODO: TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING
 
     foreach(QString fileUrl, fileUrls)
     {
-        QString threadNo = m_postParser.getThreadNoFromImage(fileUrl);
-        QString currentDate = QDateTime::currentDateTime().toString("yyyy-MM-dd");
-        QString savePath =
-                m_settings.getImageDirectory() + QDir::separator() +
-                currentDate + QDir::separator() +
-                threadNo + QDir::separator();
+//        QString threadNo = m_postParser.getThreadNoFromImage(fileUrl);
+//        QString currentDate = QDateTime::currentDateTime().toString("yyyy-MM-dd");
+//        QString savePath =
+//                m_settings.getImageDirectory() + QDir::separator() +
+//                currentDate + QDir::separator() +
+//                threadNo + QDir::separator();
 
-        QThread* thread = new QThread(this);
-        FileDownloader* fd = new FileDownloader();
-        fd->moveToThread(thread);
+//        QThread* thread = new QThread(this);
+//        FileDownloader* fd = new FileDownloader();
+//        fd->moveToThread(thread);
 
-        connect(fd,
-                &FileDownloader::fileSaved,
-                thread,
-                &QThread::quit);
+//        connect(fd,
+//                &FileDownloader::fileSaved,
+//                thread,
+//                &QThread::quit);
 
-        connect(thread,
-                &QThread::finished,
-                thread,
-                &QObject::deleteLater);
+//        connect(thread,
+//                &QThread::finished,
+//                thread,
+//                &QObject::deleteLater);
 
-        thread->start();
+//        thread->start();
 
-        fd->downloadFile(fileUrl,
-                         savePath,
-                         m_settings.getImageUrl());
+//        fd->downloadFile(fileUrl,
+//                         savePath,
+//                         m_settings.getImageUrl());
 
     }
+
+}
+
+void Controller::cleanupBeforeExit()
+{
+    qDebug() << "cleanupBeforeExit()";
+    m_dbThread->quit();
+    m_dbThread->wait(1000);
+    //m_dbThread->terminate();
+    m_dbThread->deleteLater();
 }

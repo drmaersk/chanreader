@@ -11,9 +11,20 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
+    //QGuiApplication::aboutToQuit() TODO: clean up stuff in controller
+
+
+
     QQmlApplicationEngine engine;
 
     Controller c;
+
+    engine.connect(&app,
+                   SIGNAL (aboutToQuit()),
+                   &c,
+                   SLOT (cleanupBeforeExit()));
+
+
 
     engine.rootContext()->setContextProperty("controllerCpp",&c);
 

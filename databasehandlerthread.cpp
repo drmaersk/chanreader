@@ -14,7 +14,7 @@ DatabaseHandlerThread::DatabaseHandlerThread(QObject *parent) :
 void DatabaseHandlerThread::run()
 {
     forever{
-        m_mutex.lock();
+//        m_mutex.lock();
         if(m_gotsignal)
         {
             qDebug() << "received a signal size == " << m_test.size();
@@ -25,7 +25,8 @@ void DatabaseHandlerThread::run()
             QThread::msleep(500);
             m_gotsignal = false;
         }
-        m_mutex.unlock();
+//        m_mutex.unlock();
+
 
 //        QThread::msleep(200);
 //        exec();

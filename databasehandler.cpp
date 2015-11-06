@@ -1,6 +1,6 @@
 #include "databasehandler.h"
 
-DataBaseHandler::DataBaseHandler()
+DataBaseHandler::DataBaseHandler(QObject* parent) : QObject(parent)
 {
     qDebug() << "DbConstructor";
     m_db = QSqlDatabase::addDatabase("QSQLITE");
@@ -43,8 +43,6 @@ void DataBaseHandler::insertThreadInDatabase(QString board, QString date, QStrin
     query.addBindValue(thread);
     query.addBindValue(date);
     query.exec();
-
-
 
             //query.exec("CREATE TABLE IF NOT EXISTS post (no STRING, com STRING)");
 }

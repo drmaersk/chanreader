@@ -12,7 +12,6 @@
 #include "webserviceclient.h" //TODO: remove
 #include <QThread>
 #include "settingshandler.h"
-#include "filedownloaderthread.h"
 #include "databasehandlerthread.h"
 
 class Controller : public QObject
@@ -34,6 +33,9 @@ public:
 
  QString baseDirectory() const;
  void setBaseDirectory(const QString &baseDirectory);
+
+public slots:
+ void cleanupBeforeExit();
 
 signals:
  Q_SIGNAL void frontPageJsonDownloaded();
