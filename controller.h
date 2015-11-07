@@ -12,7 +12,6 @@
 #include "webserviceclient.h" //TODO: remove
 #include <QThread>
 #include "settingshandler.h"
-#include "databasehandlerthread.h"
 
 class Controller : public QObject
 {
@@ -53,7 +52,7 @@ private slots:
   QJsonArray m_currentThread;
   SettingsHandler m_settings;
   void downloadImages(QStringList fileUrls);
-  DatabaseHandlerThread* m_dbThread;
+  QThread* m_dbThread;
 };
 
 

@@ -4,9 +4,14 @@ DataBaseHandler::DataBaseHandler(QObject* parent) : QObject(parent)
 {
     qDebug() << "DbConstructor";
     m_db = QSqlDatabase::addDatabase("QSQLITE");
-    qDebug() << QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     QString settingsDir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    if(!QDir(settingsDir).exists())
+    {
+        QDir().mkpath(settingsDir);
+    }
+
     m_db.setDatabaseName(settingsDir + QDir::separator() +"chanReaderDb.sqlite");
+
     if (!m_db.open())
     {
         qDebug() << m_db.lastError().text();

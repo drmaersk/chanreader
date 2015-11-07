@@ -9,8 +9,7 @@ SOURCES += main.cpp \
     databasehandler.cpp \
     webserviceclient.cpp \
     controller.cpp \
-    settingshandler.cpp \
-    databasehandlerthread.cpp
+    settingshandler.cpp
 
 RESOURCES += qml.qrc
 
@@ -28,8 +27,7 @@ HEADERS += \
     databasehandler.h \
     webserviceclient.h \
     controller.h \
-    settingshandler.h \
-    databasehandlerthread.h
+    settingshandler.h
 
 DISTFILES +=
 
