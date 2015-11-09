@@ -54,14 +54,11 @@ void WebServiceClient::downloadFinished(QNetworkReply* pReply)
         QJsonObject obj = doc.object();
         if(!obj["threads"].isNull())
         {
-            qDebug() << "Received frontPage";
             m_currentPage = obj["threads"].toArray();
             emit(frontPageJsonDownloaded(true));
         }
         else if(!obj["posts"].isNull())
         {
-            qDebug() << "Received thread";
-            //qDebug() << obj;
             m_currentThread = obj["posts"].toArray();
             emit(threadJsonDownloaded(true));
         }

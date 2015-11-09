@@ -14,22 +14,27 @@ Controller::Controller(QObject *parent) :
     connect(&m_wc,
             SIGNAL (threadJsonDownloaded(bool)),
             this,
-            SLOT (threadJsonDownloaded(bool)));
+            SLOT (threadJsonReady(bool)));
     connect(&m_wc,
             SIGNAL (frontPageJsonDownloaded(bool)),
             this,
-            SLOT (frontPageJsonDownloaded(bool)));
+            SLOT (frontPageJsonReady(bool)));
 
     m_dbThread = new QThread(this);
     m_dataBaseHandler.moveToThread(m_dbThread);
     m_dbThread->start();
 
-    qRegisterMetaType<QVector<ThreadData>>();
+
 
     connect(this,
-            SIGNAL (insertThreadsInDatabase(QVector<ThreadData>)),
+            SIGNAL (insertThreadsInDatabase(QJsonArray)),
             &m_dataBaseHandler,
-            SLOT (insertThreadsInDatabase(QVector<ThreadData>)));
+            SLOT (insertThreadsInDatabase(QJsonArray)));
+
+    connect(this,
+            SIGNAL (insertPostsInDatabase(QJsonArray)),
+            &m_dataBaseHandler,
+            SLOT (insertPostsInDatabase(QJsonArray)));
 }
 
 void Controller::downloadFrontPageJson()
@@ -85,18 +90,23 @@ QString Controller::imageUrl()
     return boardUrl;
 }
 
-void Controller::threadJsonDownloaded(bool success)
+void Controller::threadJsonReady(bool success)
 {
     if(success)
     {
         m_currentThread = m_wc.getThreadJson();
         QStringList imgUrls = m_postParser.getImageUrlsFromThread(m_currentThread);
         downloadImages(imgUrls);
-        emit threadJsonDownloaded();
+        emit insertPostsInDatabase(m_currentThread);
+        emit threadJsonReady();
+    }
+    else{
+        m_currentThread = m_dataBaseHandler.getThread("62574811");
+        emit threadJsonReady();
     }
 }
 
-void Controller::frontPageJsonDownloaded(bool success)
+void Controller::frontPageJsonReady(bool success)
 {
     if(success)
     {
@@ -104,11 +114,8 @@ void Controller::frontPageJsonDownloaded(bool success)
         QStringList imgUrls = m_postParser.getImageUrlsFromFrontPage(m_currentFrontPage);
         downloadImages(imgUrls);
 
-        //TODO:
-
-        QVector<ThreadData> threadData = m_postParser.getThreadDataFromFrontPage(m_currentFrontPage);
-        emit insertThreadsInDatabase(threadData);
-        emit frontPageJsonDownloaded();
+        emit insertThreadsInDatabase(m_currentFrontPage);
+        emit frontPageJsonReady();
     }
 }
 

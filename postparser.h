@@ -16,8 +16,11 @@ public:
     QString getThreadNoFromImage(const QString &imageName) const;
     QVector<ThreadData> getThreadDataFromFrontPage(QJsonArray threads);
 
+    QStringList getThreadNumbersFromFrontPageJson(QJsonArray threads);
+
+    QJsonArray getPostsFromThreadNumber(QString threadNo, QJsonArray threads);
 private:
-    QStringList parsePosts(const QJsonArray posts);
+    QStringList getImageUrlsFromPosts(const QJsonArray posts);
     QHash<QString, QString> m_imageToThreadMap;
 };
 

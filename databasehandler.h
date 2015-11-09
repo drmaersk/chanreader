@@ -8,22 +8,22 @@
 #include <QtDebug>
 #include <QStandardPaths>
 #include <QMutex>
-#include "threaddata.h"
+#include <QJsonArray>
+#include "postparser.h"
 
 class DataBaseHandler : public QObject
 {
     Q_OBJECT
 public:
     DataBaseHandler(QObject* parent = 0);
-
-    void insertThreadInDatabase(QString board, QString date, QString thread);
-    void insertPostsInDatabase(QStringList posts);
-//signals:
-
+    QJsonArray getThread(QString threadNo);
 public slots:
-    void insertThreadsInDatabase(QVector<ThreadData> threads);
+    void insertThreadsInDatabase(QJsonArray threads);
+    void insertPostsInDatabase(QJsonArray posts);
 private:
+    void insertThreadInDatabase(QString board, QString date, QString thread);
     QSqlDatabase m_db;
+    PostParser m_postParser;
     QMutex m_mutex;
 };
 

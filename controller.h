@@ -37,13 +37,14 @@ public slots:
  void cleanupBeforeExit();
 
 signals:
- Q_SIGNAL void frontPageJsonDownloaded();
- Q_SIGNAL void threadJsonDownloaded();
- Q_SIGNAL void insertThreadsInDatabase(QVector<ThreadData> threads);
+ Q_SIGNAL void frontPageJsonReady();
+ Q_SIGNAL void threadJsonReady();
+ Q_SIGNAL void insertThreadsInDatabase(QJsonArray threads);
+ Q_SIGNAL void insertPostsInDatabase(QJsonArray posts);
 
 private slots:
- void threadJsonDownloaded(bool success);
- void frontPageJsonDownloaded(bool success);
+ void threadJsonReady(bool success);
+ void frontPageJsonReady(bool success);
 
  private:
   PostParser m_postParser;

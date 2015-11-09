@@ -121,8 +121,8 @@ Item {
 
     Connections {
         target: controllerCpp
-        onFrontPageJsonDownloaded: {state = "frontPageReady";}
-        onThreadJsonDownloaded:    {state = "threadReady";}
+        onFrontPageJsonReady: {state = "frontPageReady";}
+        onThreadJsonReady:    {state = "threadReady";}
     }
 
     function switchState()

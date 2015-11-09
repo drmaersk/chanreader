@@ -12,7 +12,7 @@ QStringList PostParser::getImageUrlsFromFrontPage(const QJsonArray threads)
     m_imageToThreadMap.clear();
     foreach (const QJsonValue& thread, threads) {
         QJsonArray posts = thread.toObject()["posts"].toArray();
-        imgFileNames += parsePosts(posts);
+        imgFileNames += getImageUrlsFromPosts(posts);
     }
 
     return imgFileNames;
@@ -20,10 +20,10 @@ QStringList PostParser::getImageUrlsFromFrontPage(const QJsonArray threads)
 
 QStringList PostParser::getImageUrlsFromThread(const QJsonArray posts){
     m_imageToThreadMap.clear();
-    return parsePosts(posts);
+    return getImageUrlsFromPosts(posts);
 }
 
-QStringList PostParser::parsePosts(const QJsonArray posts)
+QStringList PostParser::getImageUrlsFromPosts(const QJsonArray posts)
 {
     QStringList imgFileNames;
     foreach (const QJsonValue& post, posts) {
@@ -79,4 +79,38 @@ QVector<ThreadData> PostParser::getThreadDataFromFrontPage(QJsonArray threads)
         threadsVector.push_back(currentThread);
     }
     return threadsVector;
+}
+
+QStringList PostParser::getThreadNumbersFromFrontPageJson(QJsonArray threads)
+{
+    QStringList threadNumbers;
+    foreach (const QJsonValue& thread, threads) {
+        QJsonArray posts = thread.toObject()["posts"].toArray();
+        QJsonObject postObj = posts[0].toObject();
+        if(postObj["resto"] == 0)
+        {
+            QString threadNo = QString::number(postObj["no"].toInt());
+            threadNumbers << threadNo;
+        }
+    }
+    return threadNumbers;
+}
+
+QJsonArray PostParser::getPostsFromThreadNumber(QString threadNo, QJsonArray threads)
+{
+    QJsonArray posts;
+    foreach (const QJsonValue& thread, threads) {
+        posts = thread.toObject()["posts"].toArray();
+        QJsonObject postObj = posts[0].toObject();
+        if(postObj["resto"] == 0)
+        {
+            QString currThreadNo = QString::number(postObj["no"].toInt());
+            if(currThreadNo == threadNo)
+            {
+                return posts;
+            }
+        }
+    }
+    qDebug() << "PostParser::getPostsFromThreadNumber ERROR: Did not find thread";
+    return posts;
 }
