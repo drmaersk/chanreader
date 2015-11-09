@@ -52,35 +52,6 @@ QString PostParser::getThreadNoFromImage(const QString &imageName) const
     return m_imageToThreadMap.find(imageName).value();
 }
 
-QVector<ThreadData> PostParser::getThreadDataFromFrontPage(QJsonArray threads)
-{
-    QVector<ThreadData> threadsVector;
-    foreach (const QJsonValue& thread, threads) {
-        QJsonArray posts = thread.toObject()["posts"].toArray();
-        ThreadData currentThread;
-
-        foreach (const QJsonValue& post, posts) {
-            QJsonObject postObj = post.toObject();
-            PostData postData;
-
-            if(postObj["resto"] == 0)
-            {
-                QString threadNo = QString::number(postObj["no"].toInt());
-                currentThread.no = threadNo;
-            }
-            postData.name = postObj["name"].toString();
-            postData.com = postObj["com"].toString();
-            postData.no  = QString::number(postObj["no"].toInt());
-
-            currentThread.posts.push_back(postData);
-
-        }
-
-        threadsVector.push_back(currentThread);
-    }
-    return threadsVector;
-}
-
 QStringList PostParser::getThreadNumbersFromFrontPageJson(QJsonArray threads)
 {
     QStringList threadNumbers;

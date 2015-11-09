@@ -1,6 +1,5 @@
 #include "controller.h"
 #include "filedownloader.h"
-#include "threaddata.h"
 
 Controller::Controller(QObject *parent) :
     QObject(parent),
