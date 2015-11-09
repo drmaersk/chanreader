@@ -1,5 +1,6 @@
 #include "postparser.h"
 
+
 PostParser::PostParser() : m_imageToThreadMap()
 {
 
@@ -24,8 +25,8 @@ QStringList PostParser::getImageUrlsFromThread(const QJsonArray posts){
 
 QStringList PostParser::parsePosts(const QJsonArray posts)
 {
-   QStringList imgFileNames;
-   foreach (const QJsonValue& post, posts) {
+    QStringList imgFileNames;
+    foreach (const QJsonValue& post, posts) {
         QJsonObject postObj = post.toObject();
         if(!postObj["tim"].isNull()){
             QString imgName = QString::number(postObj["tim"].toVariant().toLongLong(), 10);
@@ -33,8 +34,8 @@ QStringList PostParser::parsePosts(const QJsonArray posts)
             imgFileNames << imgFileName;
             if(postObj["resto"] == 0)
             {
-               QString threadNo = QString::number(postObj["no"].toInt());
-               m_imageToThreadMap.insert(imgFileName, threadNo);
+                QString threadNo = QString::number(postObj["no"].toInt());
+                m_imageToThreadMap.insert(imgFileName, threadNo);
             }
             else
             {
@@ -49,4 +50,33 @@ QStringList PostParser::parsePosts(const QJsonArray posts)
 QString PostParser::getThreadNoFromImage(const QString &imageName) const
 {
     return m_imageToThreadMap.find(imageName).value();
+}
+
+QVector<ThreadData> PostParser::getThreadDataFromFrontPage(QJsonArray threads)
+{
+    QVector<ThreadData> threadsVector;
+    foreach (const QJsonValue& thread, threads) {
+        QJsonArray posts = thread.toObject()["posts"].toArray();
+        ThreadData currentThread;
+
+        foreach (const QJsonValue& post, posts) {
+            QJsonObject postObj = post.toObject();
+            PostData postData;
+
+            if(postObj["resto"] == 0)
+            {
+                QString threadNo = QString::number(postObj["no"].toInt());
+                currentThread.no = threadNo;
+            }
+            postData.name = postObj["name"].toString();
+            postData.com = postObj["com"].toString();
+            postData.no  = QString::number(postObj["no"].toInt());
+
+            currentThread.posts.push_back(postData);
+
+        }
+
+        threadsVector.push_back(currentThread);
+    }
+    return threadsVector;
 }

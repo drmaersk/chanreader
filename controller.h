@@ -9,7 +9,7 @@
 #include <QJsonArray>
 #include "postparser.h"
 #include "databasehandler.h"
-#include "webserviceclient.h" //TODO: remove
+#include "webserviceclient.h"
 #include <QThread>
 #include "settingshandler.h"
 
@@ -39,6 +39,7 @@ public slots:
 signals:
  Q_SIGNAL void frontPageJsonDownloaded();
  Q_SIGNAL void threadJsonDownloaded();
+ Q_SIGNAL void insertThreadsInDatabase(QVector<ThreadData> threads);
 
 private slots:
  void threadJsonDownloaded(bool success);

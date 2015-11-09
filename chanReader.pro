@@ -27,7 +27,8 @@ HEADERS += \
     databasehandler.h \
     webserviceclient.h \
     controller.h \
-    settingshandler.h
+    settingshandler.h \
+    threaddata.h
 
 DISTFILES +=
 

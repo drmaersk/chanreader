@@ -1,6 +1,6 @@
 #include "controller.h"
 #include "filedownloader.h"
-#include <QGuiApplication> //TODO: Do this from parent
+#include "threaddata.h"
 
 Controller::Controller(QObject *parent) :
     QObject(parent),
@@ -19,12 +19,17 @@ Controller::Controller(QObject *parent) :
             SIGNAL (frontPageJsonDownloaded(bool)),
             this,
             SLOT (frontPageJsonDownloaded(bool)));
-    m_settings.setCurrentBoard("tv");
-    qDebug() << m_settings.getBoardUrl();
 
     m_dbThread = new QThread(this);
     m_dataBaseHandler.moveToThread(m_dbThread);
     m_dbThread->start();
+
+    qRegisterMetaType<QVector<ThreadData>>();
+
+    connect(this,
+            SIGNAL (insertThreadsInDatabase(QVector<ThreadData>)),
+            &m_dataBaseHandler,
+            SLOT (insertThreadsInDatabase(QVector<ThreadData>)));
 }
 
 void Controller::downloadFrontPageJson()
@@ -86,7 +91,6 @@ void Controller::threadJsonDownloaded(bool success)
     {
         m_currentThread = m_wc.getThreadJson();
         QStringList imgUrls = m_postParser.getImageUrlsFromThread(m_currentThread);
-        //        qDebug() << "IMAGE SIZE:" << imgUrls.size();
         downloadImages(imgUrls);
         emit threadJsonDownloaded();
     }
@@ -98,8 +102,12 @@ void Controller::frontPageJsonDownloaded(bool success)
     {
         m_currentFrontPage = m_wc.getFrontPageJson();
         QStringList imgUrls = m_postParser.getImageUrlsFromFrontPage(m_currentFrontPage);
-        //        qDebug() << "IMAGE SIZE:" << imgUrls.size();
         downloadImages(imgUrls);
+
+        //TODO:
+
+        QVector<ThreadData> threadData = m_postParser.getThreadDataFromFrontPage(m_currentFrontPage);
+        emit insertThreadsInDatabase(threadData);
         emit frontPageJsonDownloaded();
     }
 }
