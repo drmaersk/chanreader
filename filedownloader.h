@@ -14,9 +14,7 @@ class FileDownloader : public QObject
 {
  Q_OBJECT
 public:
-  FileDownloader(QObject *parent = 0, const QString baseUrl = "", const QString fileName = "", const QString saveDirectory = "");
-
- void download();
+  FileDownloader(QObject *parent = 0, const QString baseUrl = "", const QString fileName = "", const QString pathToSave = "");
 
  void downloadFile(QString fileName);
 
@@ -24,7 +22,8 @@ signals:
  Q_SIGNAL void fileSaved(QString fileName, QString path);
 
 public slots:
- void downloadFile(QString fileName, QString pathToSave, QString baseUrl);
+ void downloadFile(QString baseUrl, QString fileName, QString pathToSave);
+ void download();
 
 private slots:
  void fileDownloaded(QNetworkReply* pReply);

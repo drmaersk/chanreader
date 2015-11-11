@@ -12,6 +12,7 @@
 #include "webserviceclient.h"
 #include <QThread>
 #include "settingshandler.h"
+#include "filedownloaderhandler.h"
 
 class Controller : public QObject
 {
@@ -41,6 +42,7 @@ signals:
  Q_SIGNAL void threadJsonReady();
  Q_SIGNAL void insertThreadsInDatabase(QJsonArray threads);
  Q_SIGNAL void insertPostsInDatabase(QJsonArray posts);
+ Q_SIGNAL void putOnQueue(QString, QString, QString);
 
 private slots:
  void threadJsonReady(bool success);
@@ -52,9 +54,11 @@ private slots:
   WebServiceClient m_wc;
   QJsonArray m_currentFrontPage;
   QJsonArray m_currentThread;
-  SettingsHandler m_settings;
+  SettingsHandler* m_settings;
   void downloadImages(QStringList fileUrls);
   QThread* m_dbThread;
+  FileDownloaderHandler m_fileDownloaderHandler;
+  QThread* m_fileDlThread;
 };
 
 

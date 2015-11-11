@@ -27,7 +27,7 @@ void WebServiceClient::downloadFrontPageJson(QString board)
     {
         QString currentPage = QString::number(i);
         QNetworkRequest req = QNetworkRequest(QUrl(URL_PREFIX_WEB_SERVICE_HTTP+board+"/"+currentPage+".json"));
-        qDebug() << URL_PREFIX_WEB_SERVICE_HTTP+board+"/"+currentPage+".json";
+        //qDebug() << URL_PREFIX_WEB_SERVICE_HTTP+board+"/"+currentPage+".json";
         m_WebCtrl.get(req);
     }
 }

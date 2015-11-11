@@ -2,6 +2,9 @@
 #include <QDateTime>
 #include <QThread> //TODO: remove after testing
 #include <QJsonValue>
+#include <QRegularExpression>
+#include "webserviceclient.h"
+#include "settingshandler.h"
 
 DataBaseHandler::DataBaseHandler(QObject* parent) : QObject(parent), m_postParser(), m_mutex(), m_debugOutput(false)
 {
@@ -38,7 +41,7 @@ void DataBaseHandler::insertThreadsInDatabase(QJsonArray threads)
     QStringList threadNumbers = m_postParser.getThreadNumbersFromFrontPageJson(threads);
     foreach(QString threadNumber, threadNumbers)
     {
-        qDebug() << threadNumber;
+        //qDebug() << threadNumber;
         QJsonArray posts = m_postParser.getPostsFromThreadNumber(threadNumber, threads);
         insertThreadInDatabase("tv", QDateTime::currentDateTime().toString("yyyy-MM-dd"), threadNumber); //TODO: get board programmatically
         insertPostsInDatabase(posts);
@@ -65,6 +68,7 @@ void DataBaseHandler::insertThreadInDatabase(QString board, QString date, QStrin
 void DataBaseHandler::insertPostsInDatabase(QJsonArray posts)
 {
     m_mutex.lock();
+    const QString currentTimPrefix = WebServiceClient::URL_PREFIX_IMAGE_HTTP + SettingsHandler::getSettingsHandler()->getCurrentBoard() + "/";
     QSqlQuery query(m_db);
     foreach (const QJsonValue& post, posts) {
         QJsonObject postObj = post.toObject();
@@ -86,6 +90,10 @@ void DataBaseHandler::insertPostsInDatabase(QJsonArray posts)
         QString name = postObj["name"].toString();
         QString ext = postObj["ext"].toString();
         QString tim = QString::number(postObj["tim"].toVariant().toLongLong(), 10);
+        if(!tim.isEmpty())
+        {
+            tim = currentTimPrefix + tim;
+        }
         QString trip = postObj["trip"].toString();
         QString w = QString::number(postObj["w"].toInt());
         QString h = QString::number(postObj["h"].toInt());
@@ -115,14 +123,19 @@ void DataBaseHandler::insertPostsInDatabase(QJsonArray posts)
 void DataBaseHandler::insertImageInDatabase(QString fileName, QString path)
 {
     m_mutex.lock();
-    qDebug() << fileName << " " << path;
+    static int i = 1;
     QStringList splitPath = path.split(QDir::separator());
+    QStringList splitName = fileName.split(".");
+
+    QString tim = splitName[0]; //TODO: full path to img
+    QString ext = "."+splitName[1];
     QString board = splitPath[2];
     QString thread = splitPath[4];
-
-    qDebug() << "Board: " << board << " Thread: " << thread;
-
-
+    if(i == 1)
+    {
+        qDebug() << board << thread << tim << ext;
+    }
+    i++;
     m_mutex.unlock();
 }
 

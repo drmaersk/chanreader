@@ -1,13 +1,27 @@
 #include "settingshandler.h"
 
+
+//TODO: validate settings
 SettingsHandler::SettingsHandler() :
     m_settingsFile(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + QDir::separator() +"chanReader.ini"),
     m_settings(m_settingsFile,QSettings::IniFormat)
 {
-    initSettings();
+
 }
 
-//TODO: validate settings
+SettingsHandler* SettingsHandler::m_settingsHandler = 0;
+
+SettingsHandler* SettingsHandler::getSettingsHandler()
+{
+
+    if(!m_settingsHandler)
+    {
+        m_settingsHandler = new SettingsHandler();
+        m_settingsHandler->initSettings();
+    }
+    return m_settingsHandler;
+}
+
 void SettingsHandler::initSettings()
 {
     if(!QFile(m_settings.fileName()).exists())
@@ -24,7 +38,6 @@ void SettingsHandler::initSettings()
         m_settings.setValue("b",   "4cdn.org/b/");
         m_settings.setValue("r9k", "4cdn.org/r9k/");
         m_settings.endGroup();
-        //   "http://i.4cdn.org/"
     }
 }
 

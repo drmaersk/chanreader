@@ -10,11 +10,11 @@
 FileDownloader::FileDownloader(QObject *parent,
                                const QString baseUrl,
                                const QString fileName,
-                               const QString saveDirectory) :
+                               const QString pathToSave) :
     QObject(parent),
     m_baseUrl(baseUrl),
     m_fileName(fileName),
-    m_saveDirectory(saveDirectory)
+    m_saveDirectory(pathToSave)
 {
     QString url = baseUrl+fileName;
     m_fileUrl.setUrl(url);
@@ -31,7 +31,7 @@ void FileDownloader::download()
     m_WebCtrl.get(request);
 }
 
-void FileDownloader::downloadFile(QString fileName, QString pathToSave, QString baseUrl)
+void FileDownloader::downloadFile(QString baseUrl, QString fileName, QString pathToSave)
 {
     m_baseUrl = baseUrl;
     QString url = baseUrl+fileName;
