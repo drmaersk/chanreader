@@ -9,7 +9,8 @@ const QString WebServiceClient::URL_PREFIX_IMAGE_HTTPS = "https://i.4cdn.org/";
 WebServiceClient::WebServiceClient(QObject *parent) :
     QObject(parent),
     m_WebCtrl(),
-    m_currentPage(),
+    m_currentFrontPage(),
+    m_currentFrontPageRequests(0),
     m_currentThread()
 {
     connect(&m_WebCtrl,
@@ -20,9 +21,15 @@ WebServiceClient::WebServiceClient(QObject *parent) :
 
 void WebServiceClient::downloadFrontPageJson(QString board)
 {
-    QNetworkRequest req = QNetworkRequest(QUrl(URL_PREFIX_WEB_SERVICE_HTTP+board+"/1.json"));
-    qDebug() << URL_PREFIX_WEB_SERVICE_HTTP<<board<<"/1.json";
-    m_WebCtrl.get(req);
+    m_currentFrontPageRequests = 1; //TODO: set programatically
+
+    for(int i = 1; i <= 1; i++) //TODO: set programatically
+    {
+        QString currentPage = QString::number(i);
+        QNetworkRequest req = QNetworkRequest(QUrl(URL_PREFIX_WEB_SERVICE_HTTP+board+"/"+currentPage+".json"));
+        qDebug() << URL_PREFIX_WEB_SERVICE_HTTP+board+"/"+currentPage+".json";
+        m_WebCtrl.get(req);
+    }
 }
 
 void WebServiceClient::downloadThreadJson(QString board, QString threadNo)
@@ -31,9 +38,9 @@ void WebServiceClient::downloadThreadJson(QString board, QString threadNo)
     m_WebCtrl.get(req);
 }
 
-QJsonArray WebServiceClient::getFrontPageJson()
+QVector<QJsonArray> WebServiceClient::getFrontPageJson() //TODO: take page number
 {
-    return m_currentPage;
+    return m_currentFrontPage;
 }
 
 QJsonArray WebServiceClient::getThreadJson()
@@ -61,8 +68,14 @@ void WebServiceClient::downloadFinished(QNetworkReply* pReply)
         QJsonObject obj = doc.object();
         if(!obj["threads"].isNull())
         {
-            m_currentPage = obj["threads"].toArray();
-            emit(frontPageJsonDownloaded(true));
+            m_currentFrontPage.push_back(obj["threads"].toArray());
+            --m_currentFrontPageRequests;
+            qDebug() << m_currentFrontPageRequests;
+            if(m_currentFrontPageRequests == 0)
+            {
+                qDebug() << "All page requests done";
+                emit(frontPageJsonDownloaded(true));
+            }
         }
         else if(!obj["posts"].isNull())
         {

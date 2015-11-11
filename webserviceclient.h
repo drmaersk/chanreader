@@ -23,7 +23,7 @@ public:
     void downloadThreadJson(QString board, QString threadNo);
     void downloadFrontPageJson(QString board);
 
-    QJsonArray getFrontPageJson();
+    QVector<QJsonArray> getFrontPageJson();
     QJsonArray getThreadJson();
 
 signals:
@@ -34,7 +34,8 @@ private slots:
     void downloadFinished(QNetworkReply* pReply);
 private:
     QNetworkAccessManager m_WebCtrl;
-    QJsonArray m_currentPage;
+    QVector<QJsonArray> m_currentFrontPage;
+    uint32_t m_currentFrontPageRequests;
     QJsonArray m_currentThread;
 };
 

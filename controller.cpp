@@ -113,13 +113,16 @@ void Controller::frontPageJsonReady(bool success)
 {
     if(success)
     {
-        m_currentFrontPage = m_wc.getFrontPageJson();
-        QStringList imgUrls = m_postParser.getImageUrlsFromFrontPage(m_currentFrontPage);
 
-        emit insertThreadsInDatabase(m_currentFrontPage);
+        QVector<QJsonArray> currentFrontPage = m_wc.getFrontPageJson(); //TODO: send to database
+        m_currentFrontPage = currentFrontPage[0]; //TODO: Do something
+        foreach(QJsonArray page, currentFrontPage){
+            QStringList imgUrls = m_postParser.getImageUrlsFromFrontPage(page);
+            downloadImages(imgUrls);
+            emit insertThreadsInDatabase(page);
+        }
         emit frontPageJsonReady();
 
-        downloadImages(imgUrls);
     }
 }
 
