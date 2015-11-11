@@ -1,5 +1,11 @@
 #include "webserviceclient.h"
 
+const QString WebServiceClient::URL_PREFIX_WEB_SERVICE_HTTP = "http://a.4cdn.org/";
+const QString WebServiceClient::URL_PREFIX_WEB_SERVICE_HTTPS = "https://a.4cdn.org/";
+const QString WebServiceClient::URL_PREFIX_IMAGE_HTTP = "http://i.4cdn.org/";
+const QString WebServiceClient::URL_PREFIX_IMAGE_HTTPS = "https://i.4cdn.org/";
+
+
 WebServiceClient::WebServiceClient(QObject *parent) :
     QObject(parent),
     m_WebCtrl(),
@@ -12,15 +18,16 @@ WebServiceClient::WebServiceClient(QObject *parent) :
             SLOT (downloadFinished(QNetworkReply*)));
 }
 
-void WebServiceClient::downloadFrontPageJson(QString boardUrl)
+void WebServiceClient::downloadFrontPageJson(QString board)
 {
-    QNetworkRequest req = QNetworkRequest(QUrl(boardUrl+"1.json"));
+    QNetworkRequest req = QNetworkRequest(QUrl(URL_PREFIX_WEB_SERVICE_HTTP+board+"/1.json"));
+    qDebug() << URL_PREFIX_WEB_SERVICE_HTTP<<board<<"/1.json";
     m_WebCtrl.get(req);
 }
 
-void WebServiceClient::downloadThreadJson(QString boardUrl, QString threadNo)
+void WebServiceClient::downloadThreadJson(QString board, QString threadNo)
 {
-    QNetworkRequest req = QNetworkRequest(QUrl(boardUrl+"thread/"+threadNo+".json"));
+    QNetworkRequest req = QNetworkRequest(QUrl(URL_PREFIX_WEB_SERVICE_HTTP+board+"/thread/"+threadNo+".json"));
     m_WebCtrl.get(req);
 }
 
@@ -67,7 +74,7 @@ void WebServiceClient::downloadFinished(QNetworkReply* pReply)
     {
         qDebug() << "ERROR Parsing JSON reply";
     }
-
+    qDebug() << "Network reply saved";
 }
 
 

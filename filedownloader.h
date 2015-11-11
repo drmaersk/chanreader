@@ -21,7 +21,7 @@ public:
  void downloadFile(QString fileName);
 
 signals:
- Q_SIGNAL void fileSaved();
+ Q_SIGNAL void fileSaved(QString fileName, QString path);
 
 public slots:
  void downloadFile(QString fileName, QString pathToSave, QString baseUrl);

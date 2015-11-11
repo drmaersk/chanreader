@@ -108,7 +108,7 @@ Flickable {
                 if(postBase.ext.length > 0){
                     if(postBase.ext.trim() != ".webm"){
                         previewImage.state = "preview"
-                        previewImage.source = controllerCpp.imageUrl()+tim+ext;
+//                        previewImage.source = controllerCpp.imageUrl()+tim+ext; TODO: FIX THIS TO GET IMAGE
                     }
                 }
             }

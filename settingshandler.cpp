@@ -24,6 +24,7 @@ void SettingsHandler::initSettings()
         m_settings.setValue("b",   "4cdn.org/b/");
         m_settings.setValue("r9k", "4cdn.org/r9k/");
         m_settings.endGroup();
+        //   "http://i.4cdn.org/"
     }
 }
 

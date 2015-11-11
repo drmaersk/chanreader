@@ -3,7 +3,7 @@
 #include <QThread> //TODO: remove after testing
 #include <QJsonValue>
 
-DataBaseHandler::DataBaseHandler(QObject* parent) : QObject(parent), m_postParser(), m_mutex()
+DataBaseHandler::DataBaseHandler(QObject* parent) : QObject(parent), m_postParser(), m_mutex(), m_debugOutput(false)
 {
     qDebug() << "DbConstructor";
     m_db = QSqlDatabase::addDatabase("QSQLITE");
@@ -15,22 +15,18 @@ DataBaseHandler::DataBaseHandler(QObject* parent) : QObject(parent), m_postParse
 
     m_db.setDatabaseName(settingsDir + QDir::separator() +"chanReaderDb.sqlite");
 
-    if (!m_db.open())
+    if (!m_db.open() && m_debugOutput)
     {
         qDebug() << m_db.lastError().text();
     }
     else
     {
         QSqlQuery query(m_db);
-        if(!query.exec("CREATE TABLE IF NOT EXISTS boardtothreads(board STRING, thread STRING, PRIMARY KEY(thread))"))
+        if(!query.exec("CREATE TABLE IF NOT EXISTS threads (no STRING, board STRING, date DATETIME, PRIMARY KEY(no, board))") && m_debugOutput)
         {
             qDebug() << query.lastError().text();
         }
-        if(!query.exec("CREATE TABLE IF NOT EXISTS threads (no STRING, date DATETIME, PRIMARY KEY(no))"))
-        {
-            qDebug() << query.lastError().text();
-        }
-        if(!query.exec("CREATE TABLE IF NOT EXISTS post (no STRING, com STRING, name STRING, ext STRING, tim STRING, trip STRING, w STRING, h STRING, threadNo STRING REFERENCES threads(no), PRIMARY KEY(no, threadNo))"))
+        if(!query.exec("CREATE TABLE IF NOT EXISTS post (no STRING, com STRING, name STRING, ext STRING, tim STRING, trip STRING, w STRING, h STRING, threadNo STRING REFERENCES threads(no), board STRING REFERENCES threads(board), PRIMARY KEY(no, threadNo, board))") && m_debugOutput)
         {
             qDebug() << query.lastError().text();
         }
@@ -44,35 +40,31 @@ void DataBaseHandler::insertThreadsInDatabase(QJsonArray threads)
     {
         qDebug() << threadNumber;
         QJsonArray posts = m_postParser.getPostsFromThreadNumber(threadNumber, threads);
-        insertThreadInDatabase("tv", QDateTime::currentDateTime().toString("yyyy-MM-dd"), threadNumber);
+        insertThreadInDatabase("tv", QDateTime::currentDateTime().toString("yyyy-MM-dd"), threadNumber); //TODO: get board programmatically
         insertPostsInDatabase(posts);
     }
 }
 
 void DataBaseHandler::insertThreadInDatabase(QString board, QString date, QString thread)
 {
+    m_mutex.lock();
     QSqlQuery query(m_db);
-    query.prepare("INSERT INTO boardtothreads (board, thread)"
-                  "VALUES (?, ?)");
-    query.addBindValue(board);
-    query.addBindValue(thread);
-    if(!query.exec())
-    {
-        qDebug() << query.lastError().text();
-    }
 
-    query.prepare("INSERT INTO threads (no, date)"
-                  "VALUES (?, ?)");
+    query.prepare("INSERT INTO threads (no, board, date)"
+                  "VALUES (?, ?, ?)");
     query.addBindValue(thread);
+    query.addBindValue(board);
     query.addBindValue(date);
-    if(!query.exec())
+    if(!query.exec() && m_debugOutput)
     {
         qDebug() << query.lastError().text();
     }
+    m_mutex.unlock();
 }
 
 void DataBaseHandler::insertPostsInDatabase(QJsonArray posts)
 {
+    m_mutex.lock();
     QSqlQuery query(m_db);
     foreach (const QJsonValue& post, posts) {
         QJsonObject postObj = post.toObject();
@@ -100,8 +92,8 @@ void DataBaseHandler::insertPostsInDatabase(QJsonArray posts)
 
         //TODO: add more values, required: time for sorting the SELECT
 
-        query.prepare("INSERT INTO post (no, com, name, ext, tim, trip, w, h, threadNo)"
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        query.prepare("INSERT INTO post (no, com, name, ext, tim, trip, w, h, threadNo, board)"
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         query.addBindValue(no);
         query.addBindValue(com);
         query.addBindValue(name);
@@ -111,22 +103,55 @@ void DataBaseHandler::insertPostsInDatabase(QJsonArray posts)
         query.addBindValue(w);
         query.addBindValue(h);
         query.addBindValue(threadNo);
-        if(!query.exec())
+        query.addBindValue("tv"); //TODO: get programatically
+        if(!query.exec() && m_debugOutput)
         {
             qDebug() << query.lastError().text();
         }
     }
+    m_mutex.unlock();
+}
 
+void DataBaseHandler::insertImageInDatabase(QString fileName, QString path)
+{
+    m_mutex.lock();
+    qDebug() << fileName << " " << path;
+    QStringList splitPath = path.split(QDir::separator());
+    QString board = splitPath[2];
+    QString thread = splitPath[4];
+
+    qDebug() << "Board: " << board << " Thread: " << thread;
+
+
+    m_mutex.unlock();
+}
+
+void DataBaseHandler::updateImage(QString board, QString date, QString thread)
+{
+    m_mutex.lock();
+    QSqlQuery query(m_db);
+
+    query.prepare("INSERT INTO threads (no, board, date)"
+                  "VALUES (?, ?, ?)");
+    query.addBindValue(thread);
+    query.addBindValue(board);
+    query.addBindValue(date);
+    if(!query.exec() && m_debugOutput)
+    {
+        qDebug() << query.lastError().text();
+    }
+    m_mutex.unlock();
 }
 
 QJsonArray DataBaseHandler::getThread(QString threadNo)
 {
+    m_mutex.lock();
     QSqlQuery query(m_db);
     query.prepare("SELECT * FROM post WHERE threadNo=?");
     query.addBindValue(threadNo);
     QJsonArray posts;
 
-    if(!query.exec())
+    if(!query.exec() && m_debugOutput)
     {
         qDebug() << query.lastError().text();
     }
@@ -152,7 +177,7 @@ QJsonArray DataBaseHandler::getThread(QString threadNo)
         post["h"] = h;
         posts.append(post);
     }
-
+    m_mutex.unlock();
     return posts;
 }
 

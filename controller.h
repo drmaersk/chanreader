@@ -22,8 +22,8 @@ public:
   Q_INVOKABLE void downloadThreadJson(QString threadId);
   Q_INVOKABLE QJsonArray getFrontPageJson();
   Q_INVOKABLE QJsonArray getThreadJson();
-  Q_INVOKABLE QString boardUrl();
-  Q_INVOKABLE QString imageUrl();
+//  Q_INVOKABLE QString boardUrl();
+//  Q_INVOKABLE QString imageUrl();
   Q_PROPERTY(QString currentBoard READ currentBoard WRITE setCurrentBoard)
   Q_PROPERTY(QString baseDirectory READ baseDirectory WRITE setBaseDirectory)
 

@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include <QDir>
 #include <QDateTime>
+#include "webserviceclient.h"
 
 FileDownloader::FileDownloader(QObject *parent,
                                const QString baseUrl,
@@ -63,7 +64,7 @@ void FileDownloader::fileDownloaded(QNetworkReply* pReply)
         file.close();
     }
 
-    emit fileSaved();
+    emit fileSaved(m_fileName, m_saveDirectory);
     pReply->deleteLater();
 }
 

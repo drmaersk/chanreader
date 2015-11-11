@@ -14,9 +14,14 @@ class WebServiceClient : public QObject
 {
     Q_OBJECT
 public:
+    static const QString URL_PREFIX_WEB_SERVICE_HTTP;
+    static const QString URL_PREFIX_WEB_SERVICE_HTTPS;
+    static const QString URL_PREFIX_IMAGE_HTTP;
+    static const QString URL_PREFIX_IMAGE_HTTPS;
+
     WebServiceClient(QObject *parent = 0);
-    void downloadThreadJson(QString boardUrl, QString threadNo);
-    void downloadFrontPageJson(QString boardUrl);
+    void downloadThreadJson(QString board, QString threadNo);
+    void downloadFrontPageJson(QString board);
 
     QJsonArray getFrontPageJson();
     QJsonArray getThreadJson();
