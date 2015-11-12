@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QMutex>
 #include <QThread>
+#include <QQueue>
 
 class FileDownloaderHandler : public QObject
 {
@@ -17,7 +18,7 @@ signals:
     Q_SIGNAL void fileSaved(QString, QString);
 public slots:
     void downloadWhenReady(QString, QString, QString);
-    void downloadComplete(QString, QString);
+    void downloadComplete(QString fileName, QString path);
 private:
     uint32_t m_outstandingDownloads;
     QMutex m_mutex;
@@ -27,7 +28,7 @@ private:
         QString fileName;
         QString savePath;
     };
-    QVector<FileInfoStruct> m_fileDownloaderVector;
+    QQueue<FileInfoStruct> m_fileDownloaderQueue;
 };
 
 #endif // FILEDOWNLOADERHANDLER_H

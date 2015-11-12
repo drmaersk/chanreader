@@ -1,7 +1,7 @@
 #include "filedownloaderhandler.h"
 #include "filedownloader.h"
 
-FileDownloaderHandler::FileDownloaderHandler(QObject *parent) : QObject(parent), m_outstandingDownloads(0), m_fileDownloaderVector()
+FileDownloaderHandler::FileDownloaderHandler(QObject *parent) : QObject(parent), m_outstandingDownloads(0),  m_mutex(), m_fileDownloaderQueue()
 {
 
 
@@ -11,21 +11,22 @@ FileDownloaderHandler::FileDownloaderHandler(QObject *parent) : QObject(parent),
 void FileDownloaderHandler::downloadWhenReady(QString currentBaseUrl, QString fileName, QString savePath)
 {
     m_mutex.lock();
-
-    FileInfoStruct fd = {currentBaseUrl, fileName, savePath};
-    m_fileDownloaderVector.push_back(fd);
-    m_mutex.unlock();
+    FileInfoStruct fis = {QString(currentBaseUrl), QString(fileName), QString(savePath)};
+    //qDebug() << currentBaseUrl + fileName;
+    m_fileDownloaderQueue.enqueue(fis);
     startNewDownload();
+    m_mutex.unlock();
 }
 
 void FileDownloaderHandler::startNewDownload()
 {
-    m_mutex.lock();
-    if(m_outstandingDownloads < 5 && m_fileDownloaderVector.size() > 0)
+    if(m_outstandingDownloads < 1 && !m_fileDownloaderQueue.isEmpty())
     {
-        QThread* thread = new QThread(this);
+        QThread* thread = new QThread();
         FileDownloader* fd = new FileDownloader();
-        //FileDownloader* fd = reinterpret_cast<FileDownloader*>(m_fileDownloaderVector.front()); //TODO: Create pure virtual base for FileDownloader if neccessary
+
+        fd->moveToThread(thread);
+        thread->start();
 
         connect(this,
                 SIGNAL(startDownload(QString,QString,QString)),
@@ -47,22 +48,24 @@ void FileDownloaderHandler::startNewDownload()
                 thread,
                 &QThread::deleteLater);
 
-        fd->moveToThread(thread);
-        m_fileDownloaderVector.pop_front();
-        thread->start();
-        FileInfoStruct fis = m_fileDownloaderVector.front();
+        FileInfoStruct fis = m_fileDownloaderQueue.dequeue();
+//        QString currentBaseUrl = fis.currentBaseUrl;
+//        QString fileName = fis.fileName;
+//        QString savePath = fis.savePath;
+        qDebug() << fis.fileName;
+
         emit startDownload(fis.currentBaseUrl, fis.fileName, fis.savePath);
         m_outstandingDownloads++;
     }
-    m_mutex.unlock();
 }
 
-void FileDownloaderHandler::downloadComplete(QString a, QString b)
+void FileDownloaderHandler::downloadComplete(QString fileName, QString path)
 {
     m_mutex.lock();
     --m_outstandingDownloads;
-    emit fileSaved(a,b); //To Database
-    m_mutex.unlock();
+    qDebug() << "fileSaved: " << fileName;
+    emit fileSaved(fileName,path); //To Database
     startNewDownload();
+    m_mutex.unlock();
 }
 

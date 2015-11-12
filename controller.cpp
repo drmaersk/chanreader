@@ -130,6 +130,7 @@ void Controller::frontPageJsonReady(bool success)
 
         QVector<QJsonArray> currentFrontPage = m_wc.getFrontPageJson(); //TODO: send to database
         m_currentFrontPage = currentFrontPage[0]; //TODO: Handle multiple pages
+        qDebug() << "CurrentFp Size :" << m_currentFrontPage.size();
         foreach(QJsonArray page, currentFrontPage){
             QStringList imgUrls = m_postParser.getImageUrlsFromFrontPage(page); //TODO: get image name not urls
             downloadImages(imgUrls);
@@ -154,13 +155,7 @@ void Controller::downloadImages(QStringList fileUrls)
                 currentBoard   + QDir::separator() +
                 currentDate    + QDir::separator() +
                 threadNo       + QDir::separator();
-
-        //TODO: copy one step up
-//        connect(fd,
-//                SIGNAL(fileSaved(QString, QString)),
-//                &m_dataBaseHandler,
-//                SLOT(insertImageInDatabase(QString, QString)));
-
+        qDebug() << "putOnQueue: " << fileName;
         emit putOnQueue(currentBaseUrl, fileName, savePath);
     }
 }

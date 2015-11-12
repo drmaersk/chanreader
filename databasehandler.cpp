@@ -90,7 +90,7 @@ void DataBaseHandler::insertPostsInDatabase(QJsonArray posts)
         QString name = postObj["name"].toString();
         QString ext = postObj["ext"].toString();
         QString tim = QString::number(postObj["tim"].toVariant().toLongLong(), 10);
-        if(!tim.isEmpty())
+        if(!(tim == "0"))
         {
             tim = currentTimPrefix + tim;
         }
